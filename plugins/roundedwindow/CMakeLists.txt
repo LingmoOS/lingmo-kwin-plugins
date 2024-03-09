@@ -1,3 +1,5 @@
+set(CMAKE_CXX_STANDARD 20)
+
 find_package(KF5CoreAddons)
 find_package(KF5Config)
 find_package(KF5WindowSystem)

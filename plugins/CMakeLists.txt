@@ -9,7 +9,7 @@ if(NOT QT_QMAKE_EXECUTABLE)
 endif()
 
 # exeling the command "qmake -query QT_INSTALL_PLUGINS" to get the path of plugins dir.
-exeling_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_PLUGINS
+execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_PLUGINS
     OUTPUT_VARIABLE QT_PLUGINS_DIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
