@@ -54,7 +54,7 @@ static QStringList allowList = { "netease-cloud-music netease-cloud-music",
                                };
 
 // From ubreffect
-static KWin::GLShader *getShader()
+static std::unique_ptr<KWin::GLShader> getShader()
 {
     // copy from kwinglutils.cpp
     QByteArray source;
@@ -217,7 +217,7 @@ RoundedWindow::RoundedWindow(QObject *, const QVariantList &)
     m_netWMStateMaxVertAtom = reply->atom;
     free(reply);
 
-    m_shader = getShader();
+    m_shader = getShader().get();
     m_texure = getTexture(m_frameRadius);
 }
 
