@@ -14,7 +14,7 @@ jobs:
   lingmo:
     name: LingmoOS 2.0
     runs-on: ubuntu-latest
-    container: ghcr.io/lingmoos-testing/lingmo:polaris
+    container: docker.io/library/debian:trixie-slim
     steps:
     - name: Checkout Source
       uses: actions/checkout@v2

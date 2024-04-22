@@ -30,6 +30,11 @@
 #include <QSettings>
 #include <memory>
 
+ /**
+         * Window will be painted with a lanczos filter.
+         */
+ #define  PAINT_WINDOW_LANCZOS  1 << 8
+
 Q_DECLARE_METATYPE(QPainterPath)
 
 typedef void (* SetDepth)(void *, int);
