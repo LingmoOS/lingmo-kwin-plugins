@@ -29,8 +29,8 @@
 
 namespace Lingmo {
     enum DataRole {
-        LanczosCacheRole = 1;
-    }
+        LanczosCacheRole = 1,
+    };
 }
 
 class RoundedWindow : public KWin::Effect
