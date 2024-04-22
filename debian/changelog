@@ -2,7 +2,7 @@ lingmo-kwin-plugins (1.0.0) UNRELEASED; urgency=low
 
   * Rename package from ling-* to lingmo-*
 
- -- Elysia <c.elysia@foxmail.com> Mon, 22 Apr 2024 10:33:00 +0800
+ -- Elysia <c.elysia@foxmail.com>  Mon, 22 Apr 2024 10:33:00 +0800
 
 ling-kwin-plugins (8.62.2.235) UNRELEASED; urgency=low
 
