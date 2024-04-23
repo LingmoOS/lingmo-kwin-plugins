@@ -172,9 +172,7 @@ static std::unique_ptr<KWin::GLShader> getShader()
     stream.flush();
 
     auto shader = KWin::ShaderManager::instance()->generateCustomShader(traits, QByteArray(), source);
-    //shaders.insert(direction, shader);
-    std::unique_ptr<KWin::GLShader> p(shader);
-    return p;
+    return shader;
 }
 
 static KWin::GLTexture *getTexture(int borderRadius)
