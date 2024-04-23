@@ -28,6 +28,12 @@
 #include <QDebug>
 
 #include <QSettings>
+#include <memory>
+
+ /**
+         * Window will be painted with a lanczos filter.
+         */
+ #define  PAINT_WINDOW_LANCZOS  1 << 8
 
 Q_DECLARE_METATYPE(QPainterPath)
 
@@ -167,7 +173,8 @@ static std::unique_ptr<KWin::GLShader> getShader()
 
     auto shader = KWin::ShaderManager::instance()->generateCustomShader(traits, QByteArray(), source);
     //shaders.insert(direction, shader);
-    return shader;
+    std::unique_ptr<KWin::GLShader> p(shader);
+    return p;
 }
 
 static KWin::GLTexture *getTexture(int borderRadius)

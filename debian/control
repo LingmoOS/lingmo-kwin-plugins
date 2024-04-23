@@ -1,4 +1,4 @@
-Source: ling-kwin-plugins
+Source: lingmo-kwin-plugins
 Section: devel
 Priority: optional
 Maintainer: LingmoOS <cuteos@foxmail.com>
@@ -24,7 +24,7 @@ Build-Depends: cmake,
 Standards-Version: 4.5.0
 Homepage: https://swifts.org.cn
 
-Package: ling-kwin-plugins
+Package: lingmo-kwin-plugins
 Architecture: any
 Depends: qml-module-qtquick-controls2,
          qml-module-qtquick2,

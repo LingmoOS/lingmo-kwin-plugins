@@ -27,13 +27,19 @@
 
 #include <xcb/xcb_atom.h>
 
+namespace Lingmo {
+    enum DataRole {
+        LanczosCacheRole = 1,
+    };
+}
+
 class RoundedWindow : public KWin::Effect
 {
     Q_OBJECT
 
 public:
     enum DataRole {
-        BaseRole = KWin::DataRole::LanczosCacheRole + 100,
+        BaseRole = Lingmo::DataRole::LanczosCacheRole + 100,
         WindowRadiusRole = BaseRole + 1,
         WindowClipPathRole = BaseRole + 2,
         WindowMaskTextureRole = BaseRole + 3,
