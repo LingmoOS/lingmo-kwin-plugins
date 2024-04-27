@@ -237,7 +237,7 @@ bool RoundedWindow::supported()
     if (desktop.isEmpty())
         return false;
 
-    return desktop == "Lingmo" && KWin::effects->isOpenGLCompositing() && KWin::GLRenderTarget::supported();
+    return desktop == "Lingmo" && KWin::effects->isOpenGLCompositing() && KWin::GLFramebuffer::supported();
 }
 
 bool RoundedWindow::enabledByDefault()
