@@ -172,9 +172,7 @@ static std::unique_ptr<KWin::GLShader> getShader()
     stream.flush();
 
     auto shader = KWin::ShaderManager::instance()->generateCustomShader(traits, QByteArray(), source);
-    //shaders.insert(direction, shader);
-    std::unique_ptr<KWin::GLShader> p(shader);
-    return p;
+    return shader;
 }
 
 static KWin::GLTexture *getTexture(int borderRadius)
@@ -239,7 +237,7 @@ bool RoundedWindow::supported()
     if (desktop.isEmpty())
         return false;
 
-    return desktop == "Lingmo" && KWin::effects->isOpenGLCompositing() && KWin::GLRenderTarget::supported();
+    return desktop == "Lingmo" && KWin::effects->isOpenGLCompositing() && KWin::GLFramebuffer::supported();
 }
 
 bool RoundedWindow::enabledByDefault()
