@@ -26,4 +26,6 @@ endif()
 
 # add_subdirectory(blur)
 add_subdirectory(decoration)
-add_subdirectory(roundedwindow)
+
+# Disable Legacy code
+# add_subdirectory(roundedwindow_Legacy)
