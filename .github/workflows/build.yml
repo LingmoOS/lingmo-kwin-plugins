@@ -40,3 +40,11 @@ jobs:
     - name: Build Package
       run: |
         dpkg-buildpackage -b -uc -us -j$(nproc)
+        mv ../*.deb ./
+    
+    - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.pkgs.pkg_name }}
+          path: |
+            *.deb
+          compression-level: 9 # maximum compression
