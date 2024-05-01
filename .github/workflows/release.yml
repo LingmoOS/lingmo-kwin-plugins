@@ -10,8 +10,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: Checkout Source
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
 
       - name: Build Tarball
         run: |

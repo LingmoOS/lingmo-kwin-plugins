@@ -16,14 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     container: docker.io/library/debian:trixie-slim
     steps:
-    - name: Checkout Source
-      uses: actions/checkout@v2
-
-    - name: Fix APT sources
+    - name: Install Git
       run: |
-        rm -rfv /etc/apt/sources.list
-        echo "deb https://packages.lingmo.org polaris main contrib non-free non-free-firmware" >> /etc/apt/sources.list
-        echo "deb https://mirrors.bfsu.edu.cn/debian/ testing main contrib non-free non-free-firmware" >>  /etc/apt/sources.list
+        apt update && apt install -y git
+
+    - name: Checkout Source
+      uses: actions/checkout@v4
+      with:
+        submodules: 'true'
 
     - name: Update repository
       run: apt-get update -y
@@ -32,11 +32,17 @@ jobs:
       run: apt-get install -y equivs curl git devscripts lintian build-essential automake autotools-dev cmake g++
     
     - name: Install build dependencies
-      run: mk-build-deps -i -t "apt-get --yes" -r
+      run: mk-build-deps -i -t "apt --yes --no-install-recommends" -r
     
-    - name: Fix KF5
-      run: mkdir -p /usr/include/KF5
     
     - name: Build Package
       run: |
         dpkg-buildpackage -b -uc -us -j$(nproc)
+        mv ../*.deb ./
+    
+    - uses: actions/upload-artifact@v4
+      with:
+        name: lingmo-kwin-plugins
+        path: |
+          *.deb
+        compression-level: 9 # maximum compression

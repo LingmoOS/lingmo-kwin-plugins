@@ -1,7 +1,7 @@
 Source: lingmo-kwin-plugins
 Section: devel
 Priority: optional
-Maintainer: LingmoOS <cuteos@foxmail.com>
+Maintainer: LingmoOS <lingmo@lingmo.org>
 Build-Depends: cmake,
                debhelper (>= 9),
                extra-cmake-modules,
@@ -11,10 +11,12 @@ Build-Depends: cmake,
                libkf5windowsystem-dev,
                libkf5globalaccel-dev,
                libkf5config-dev,
+               libkf5configwidgets-dev,
                libkdecorations2-dev,
                libkf5coreaddons-dev,
                libqt5opengl5-dev,
                libqt5x11extras5-dev,
+               qtbase5-private-dev,
                qtbase5-dev,
                qtbase5-private-dev,
                qtdeclarative5-dev,
@@ -22,7 +24,7 @@ Build-Depends: cmake,
                qttools5-dev,
                qttools5-dev-tools
 Standards-Version: 4.5.0
-Homepage: https://swifts.org.cn
+Homepage: https://lingmo.org
 
 Package: lingmo-kwin-plugins
 Architecture: any

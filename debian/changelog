@@ -1,3 +1,11 @@
+lingmo-kwin-plugins (1.1.0) UNRELEASED; urgency=low
+
+  * Deprecate outdated Roundwindow plugin
+  * Fix error in plugins/decoration/lingmoos.json  @Intro-iu <intro-iu@outlook.com>
+
+ -- Elysia <c.elysia@foxmail.com>  Wen, 1 May 2024 11:29:00 +0800
+
+
 lingmo-kwin-plugins (1.0.0) UNRELEASED; urgency=low
 
   * Rename package from ling-* to lingmo-*
