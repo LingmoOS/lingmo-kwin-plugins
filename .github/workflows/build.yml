@@ -34,8 +34,6 @@ jobs:
     - name: Install build dependencies
       run: mk-build-deps -i -t "apt --yes --no-install-recommends" -r
     
-    - name: Fix KF5
-      run: mkdir -p /usr/include/KF5
     
     - name: Build Package
       run: |
@@ -44,7 +42,7 @@ jobs:
     
     - uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.pkgs.pkg_name }}
+        name: lingmo-kwin-plugins
         path: |
           *.deb
         compression-level: 9 # maximum compression
