@@ -55,7 +55,13 @@ public:
     bool hasShadow(KWin::WindowQuadList &qds);
     bool isMaximized(KWin::EffectWindow *w);
 
-    void drawWindow(KWin::EffectWindow* w, int mask, const QRegion &region, KWin::WindowPaintData& data) override;
+
+#if KWIN_EFFECT_API_VERSION >= 233
+    void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
+#else
+    void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, int time) override;
+#endif
+    void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data) override;
 
 private:
     KWin::GLShader *m_shader;
@@ -66,6 +72,9 @@ private:
     xcb_atom_t m_netWMStateMaxVertAtom = 0;
 
     int m_frameRadius;
+
+    private:
+    QMap<KWin::EffectWindow*, QSharedPointer<KWin::GLTexture>> m_managed;
 };
 
 #endif

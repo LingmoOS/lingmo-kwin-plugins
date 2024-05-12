@@ -30,6 +30,16 @@
 #include <QSettings>
 #include <memory>
 
+#include <kwinglutils.h>
+
+#if KWIN_EFFECT_API_VERSION >= 234
+#include <KX11Extras>
+#else
+#include <kwindowsystem.h>
+#endif
+
+#define DEBUG_BACKGROUND 0
+
  /**
          * Window will be painted with a lanczos filter.
          */
@@ -273,18 +283,54 @@ bool RoundedWindow::isMaximized(KWin::EffectWindow *w)
     return false;
 }
 
-void RoundedWindow::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data)
+QRectF operator *(QRect r, qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
+QRectF operator *(QRectF r, qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
+QRect toRect(const QRectF& r) { return {(int)r.x(), (int)r.y(), (int)r.width(), (int)r.height()}; }
+const QRect& toRect(const QRect& r) { return r; }
+
+#if KWIN_EFFECT_API_VERSION >= 233
+void RoundedWindow::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
+#else
+void RoundedWindow::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, int time)
+#endif
 {
-    if (!w->isPaintingEnabled() || ((mask & PAINT_WINDOW_LANCZOS))) {
-        return KWin::Effect::drawWindow(w, mask, region, data);
+    if (!m_managed.contains(w)
+            || isMaximized(w)
+#if KWIN_EFFECT_API_VERSION < 234
+            || !w->isPaintingEnabled()
+#elif KWIN_EFFECT_API_VERSION < 233
+            || data.quads.isTransformed()
+            || !hasShadow(data.quads)
+#endif
+            )
+    {
+        KWin::effects->prePaintWindow(w, data, time);
+        return;
     }
 
+    const auto geo = w->frameGeometry();
+#if KWIN_EFFECT_API_VERSION >= 234
+    data.opaque -= toRect(geo);
+#endif
+    data.paint += toRect(geo);
+    KWin::effects->prePaintWindow(w, data, time);
+}
+
+void RoundedWindow::paintWindow(KWin::EffectWindow *w, int mask, QRegion region, KWin::WindowPaintData &data)
+{
+    // ToDo: LANCZOS Filter is deprecated
+    // if (!w->isPaintingEnabled() || ((mask & PAINT_WINDOW_LANCZOS))) {
+    //     return KWin::Effect::drawWindow(w, mask, region, data);
+    // }
+
     if (isMaximized(w)) {
-        return KWin::Effect::drawWindow(w, mask, region, data);
+        KWin::effects->paintWindow(w, mask, region, data);
+        return;
     }
 
     if (KWin::effects->hasActiveFullScreenEffect() || w->isFullScreen()) {
-        return KWin::Effect::drawWindow(w, mask, region, data);
+        KWin::effects->paintWindow(w, mask, region, data);
+        return;
     }
 
     if (w->isDesktop()
@@ -296,12 +342,15 @@ void RoundedWindow::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &r
                  || !hasShadow(data.quads)
             #endif
         ) {
-        if (!allowList.contains(w->windowClass()))
-            return KWin::Effect::drawWindow(w, mask, region, data);
+        if (!allowList.contains(w->windowClass())) {
+            KWin::effects->paintWindow(w, mask, region, data);
+            return;
+        }
+             
     }
 
     // 设置 alpha 通道混合
-    if (!w->hasAlpha()) {
+    if (!w->decorationHasAlpha()) {
         if (setDepthfunc) {
             setDepthfunc(w->parent(), 32);
         }
@@ -336,8 +385,8 @@ void RoundedWindow::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &r
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     glActiveTexture(GL_TEXTURE0);
 
-    KWin::GLShader *oldShader = data.shader;
-    data.shader = m_shader;
+    
+    std::shared_ptr<KWin::GLShader> oldShader = getShader();
     KWin::ShaderManager::instance()->pushShader(m_shader);
 
     m_shader->setUniform("topleft", 10);
@@ -359,7 +408,7 @@ void RoundedWindow::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &r
     KWin::Effect::drawWindow(w, mask, region, data);
     KWin::ShaderManager::instance()->popShader();
 
-    data.shader = oldShader;
+    KWin::ShaderManager::instance()->pushShader(oldShader.get());
 
     glActiveTexture(GL_TEXTURE10);
     textureTopLeft->unbind();
@@ -376,6 +425,8 @@ void RoundedWindow::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &r
     glActiveTexture(GL_TEXTURE13);
     textureBottomRight->unbind();
     glActiveTexture(GL_TEXTURE0);
+
+    KWin::ShaderManager::instance()->popShader();
 
     glDisable(GL_BLEND);
 }
