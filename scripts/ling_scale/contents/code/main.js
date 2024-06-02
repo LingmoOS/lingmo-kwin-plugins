@@ -18,9 +18,9 @@ var blocklist = [
     // KDE Plasma splash screen has to be animated only by the login effect.
     "ksplashqml ksplashqml",
 
-    "ling-launcher ling-launcher",
-    "ling-statusbar ling-statusbar",
-    "ling-screenshot ling-screenshot"
+    "lingmo-launcher lingmo-launcher",
+    "lingmo-statusbar lingmo-statusbar",
+    "lingmo-screenshot lingmo-screenshot"
 ];
 
 var scaleEffect = {

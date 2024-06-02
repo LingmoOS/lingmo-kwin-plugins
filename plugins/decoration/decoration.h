@@ -19,6 +19,9 @@
 
 #pragma once
 
+// C++ STL
+#include <memory>
+
 // KDecoration
 #include <KDecoration2/Decoration>
 #include <KDecoration2/DecorationButtonGroup>
@@ -46,7 +49,7 @@ public:
     Decoration(QObject *parent = nullptr, const QVariantList &args = QVariantList());
     ~Decoration() override;
 
-    void paint(QPainter *painter, const QRect &repaintRegion) override;
+    virtual void paint(QPainter *painter, const QRect &repaintRegion) override;
 
     QPixmap closeBtnPixmap() { return m_closeBtnPixmap; }
     QPixmap maximizeBtnPixmap() { return m_maximizeBtnPixmap; }
@@ -57,7 +60,7 @@ public:
     qreal devicePixelRatio() const { return m_devicePixelRatio; }
 
 public slots:
-    void init() override;
+    virtual void init() override;
 
 private:
     void reconfigure();

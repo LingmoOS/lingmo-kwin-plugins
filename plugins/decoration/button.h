@@ -20,6 +20,7 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
+#include <memory>
 #include <KDecoration2/DecorationButton>
 
 class Button : KDecoration2::DecorationButton
@@ -30,7 +31,7 @@ public:
     static DecorationButton *create(KDecoration2::DecorationButtonType type, KDecoration2::Decoration *decoration, QObject *parent);
 
 protected:
-    void paint(QPainter *painter, const QRect &repaintRegion) override;
+    virtual void paint(QPainter *painter, const QRect &repaintRegion) override;
 };
 
 #endif // BUTTON_H

@@ -5,8 +5,8 @@ function forceFullScreen(client) {
 }
 
 function setupConnection(client) {
-    if (client.resourceClass != "ling-launcher"
-            || client.resourceName != "ling-launcher" || client.dialog) {
+    if (client.resourceClass != "lingmo-launcher"
+            || client.resourceName != "lingmo-launcher" || client.dialog) {
         return;
     }
 
