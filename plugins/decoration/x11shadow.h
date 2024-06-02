@@ -1,6 +1,8 @@
 #ifndef X11SHADOW_H
 #define X11SHADOW_H
 
+#include <memory>
+
 #include <QObject>
 
 class X11Shadow : public QObject

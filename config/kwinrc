@@ -66,5 +66,5 @@ Top=None
 BorderSize=Normal
 ButtonsOnLeft=
 ButtonsOnRight=HIAX
-library=org.ling.decoration
+library=org.lingmo.decoration
 theme=

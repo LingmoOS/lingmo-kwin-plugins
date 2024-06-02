@@ -19,8 +19,8 @@ var blocklist = [
 ];
 
 var allowlist = [
-    "ling-launcher ling-launcher",
-    "ling-screenshot ling-screenshot"
+    "lingmo-launcher lingmo-launcher",
+    "lingmo-screenshot lingmo-screenshot"
 ];
 
 function isPopupWindow(window) {
