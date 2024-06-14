@@ -1,4 +1,4 @@
-lingmo-kwin-plugins (1.2.0) UNRELEASED; urgency=low
+lingmo-kwin-plugins (1.2.0-0) UNRELEASED; urgency=low
 
   * Move roundwindow plugin into new repo lingmo-kwin-plugins-roundedwindow
   * Fix naming error in kwin scripts that prevents the launcher from normal display
