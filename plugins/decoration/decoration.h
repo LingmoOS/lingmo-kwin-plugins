@@ -60,7 +60,7 @@ public:
     qreal devicePixelRatio() const { return m_devicePixelRatio; }
 
 public slots:
-    virtual void init() override;
+    virtual bool init() override;
 
 private:
     void reconfigure();

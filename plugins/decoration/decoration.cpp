@@ -70,7 +70,7 @@ Decoration::~Decoration()
 
 void Decoration::paint(QPainter *painter, const QRect &repaintRegion)
 {
-    auto *decoratedClient = client().toStrongRef().data();
+    auto *decoratedClient = client();
     auto s = settings();
 
     painter->fillRect(rect(), Qt::transparent);
@@ -100,9 +100,9 @@ void Decoration::paint(QPainter *painter, const QRect &repaintRegion)
     paintButtons(painter, repaintRegion);
 }
 
-void Decoration::init()
+bool Decoration::init()
 {
-    auto c = client().toStrongRef().data();
+    auto c = client();
     auto s = settings();
 
     m_devicePixelRatio = m_settings->value("PixelRatio", 1.0).toReal();
@@ -111,20 +111,20 @@ void Decoration::init()
     reconfigure();
     updateTitleBar();
 
-    connect(s.data(), &KDecoration2::DecorationSettings::borderSizeChanged, this, &Decoration::recalculateBorders);
+    connect(s.get(), &KDecoration2::DecorationSettings::borderSizeChanged, this, &Decoration::recalculateBorders);
 
     // a change in font might cause the borders to change
-    connect(s.data(), &KDecoration2::DecorationSettings::fontChanged, this, &Decoration::recalculateBorders);
-    connect(s.data(), &KDecoration2::DecorationSettings::spacingChanged, this, &Decoration::recalculateBorders);
+    connect(s.get(), &KDecoration2::DecorationSettings::fontChanged, this, &Decoration::recalculateBorders);
+    connect(s.get(), &KDecoration2::DecorationSettings::spacingChanged, this, &Decoration::recalculateBorders);
 
     // full reconfiguration
-    connect(s.data(), &KDecoration2::DecorationSettings::reconfigured, this, &Decoration::reconfigure);
-    connect(s.data(), &KDecoration2::DecorationSettings::reconfigured, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(s.get(), &KDecoration2::DecorationSettings::reconfigured, this, &Decoration::reconfigure);
+    connect(s.get(), &KDecoration2::DecorationSettings::reconfigured, this, &Decoration::updateButtonsGeometryDelayed);
 
     // buttons
-    connect(s.data(), &KDecoration2::DecorationSettings::spacingChanged, this, &Decoration::updateButtonsGeometryDelayed);
-    connect(s.data(), &KDecoration2::DecorationSettings::decorationButtonsLeftChanged, this, &Decoration::updateButtonsGeometryDelayed);
-    connect(s.data(), &KDecoration2::DecorationSettings::decorationButtonsRightChanged, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(s.get(), &KDecoration2::DecorationSettings::spacingChanged, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(s.get(), &KDecoration2::DecorationSettings::decorationButtonsLeftChanged, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(s.get(), &KDecoration2::DecorationSettings::decorationButtonsRightChanged, this, &Decoration::updateButtonsGeometryDelayed);
 
     connect(c, &KDecoration2::DecoratedClient::adjacentScreenEdgesChanged, this, &Decoration::recalculateBorders);
     connect(c, &KDecoration2::DecoratedClient::maximizedHorizontallyChanged, this, &Decoration::recalculateBorders);
@@ -216,7 +216,7 @@ void Decoration::updateResizeBorders()
 
 void Decoration::updateTitleBar()
 {
-    auto *decoratedClient = client().toStrongRef().data();
+    auto *decoratedClient = client();
     setTitleBar(QRect(0, 0, decoratedClient->width(), titleBarHeight()));
     update(titleBar());
 }
@@ -323,8 +323,10 @@ void Decoration::updateShadow()
         // assign image
         g_sShadow->setShadow(image);
     }
-
-    setShadow(g_sShadow);
+    std::shared_ptr<KDecoration2::DecorationShadow> stdShadow(g_sShadow.data(), [g_sShadow](KDecoration2::DecorationShadow*) mutable {
+        g_sShadow.reset();
+    });
+    setShadow(stdShadow);
 }
 
 void Decoration::updateBtnPixmap()
@@ -373,7 +375,7 @@ bool Decoration::radiusAvailable() const
 
 bool Decoration::isMaximized() const
 {
-    return client().toStrongRef().data()->isMaximized();
+    return client()->isMaximized();
 }
 
 void Decoration::paintFrameBackground(QPainter *painter, const QRect &repaintRegion) const
@@ -397,7 +399,7 @@ QColor Decoration::titleBarBackgroundColor() const
 
 QColor Decoration::titleBarForegroundColor() const
 {
-    const auto *decoratedClient = client().toStrongRef().data();
+    const auto *decoratedClient = client();
     const bool isActive = decoratedClient->isActive();
     QColor color;
 
@@ -414,7 +416,7 @@ void Decoration::paintCaption(QPainter *painter, const QRect &repaintRegion) con
 {
     Q_UNUSED(repaintRegion)
 
-    const auto *decoratedClient = client().toStrongRef().data();
+    const auto *decoratedClient = client();
 
     const int textWidth = settings()->fontMetrics().boundingRect(decoratedClient->caption()).width();
     const QRect textRect((size().width() - textWidth) / 2, 0, textWidth, titleBarHeight());
