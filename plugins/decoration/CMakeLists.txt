@@ -48,10 +48,10 @@ target_link_libraries (lingdecoration
         Qt5::Gui
         Qt5::Widgets
         Qt5::X11Extras
-        KF5::ConfigCore
-        KF5::ConfigGui
-        KF5::CoreAddons
-        KF5::WindowSystem
+        KF6::ConfigCore
+        KF6::ConfigGui
+        KF6::CoreAddons
+        KF6::WindowSystem
 
     PRIVATE
         KDecoration2::KDecoration
