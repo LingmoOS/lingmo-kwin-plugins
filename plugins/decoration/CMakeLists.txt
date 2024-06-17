@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 find_package(KF5CoreAddons REQUIRED)
 find_package(KF5Config REQUIRED)
 find_package(KF5WindowSystem REQUIRED)
-find_package(KDecoration2 REQUIRED)
+find_package(KF5Decoration2 REQUIRED)
 find_package(Qt5 CONFIG REQUIRED COMPONENTS Gui Widgets Core X11Extras)
 
 find_package(Qt5 CONFIG REQUIRED COMPONENTS Core Gui)
