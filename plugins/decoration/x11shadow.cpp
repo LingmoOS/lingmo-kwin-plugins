@@ -1,6 +1,7 @@
 #include "x11shadow.h"
 
 #include <QGuiApplication>
+#include <QNativeInterface>
 #include <xcb/xcb.h>
 
 static xcb_atom_t internAtom(const char *name, bool only_if_exists)
