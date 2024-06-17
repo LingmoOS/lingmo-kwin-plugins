@@ -8,11 +8,14 @@ static xcb_atom_t internAtom(const char *name, bool only_if_exists)
     if (!name || *name == 0)
         return XCB_NONE;
 
-    if (!QX11Info::isPlatformX11())
+    if (QGuiApplication::platformName() != "xcb")
         return XCB_NONE;
+    
+    // 获取 XCB 连接
+    auto *connection = static_cast<xcb_connection_t *>(QGuiApplication::platformNativeInterface()->nativeResourceForIntegration("connection"));
 
-    xcb_intern_atom_cookie_t cookie = xcb_intern_atom(QX11Info::connection(), only_if_exists, strlen(name), name);
-    xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(QX11Info::connection(), cookie, 0);
+    xcb_intern_atom_cookie_t cookie = xcb_intern_atom(connection, only_if_exists, strlen(name), name);
+    xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(connection, cookie, nullptr);
 
     if (!reply)
         return XCB_NONE;
