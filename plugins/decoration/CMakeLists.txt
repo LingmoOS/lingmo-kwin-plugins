@@ -14,18 +14,7 @@ find_package(Qt6 COMPONENTS Gui Widgets Core REQUIRED)
 
 find_package(Qt6 COMPONENTS Core Gui REQUIRED)
 
-# 获取 qt-cmake 的路径
-get_target_property(QT_CMAKE_EXECUTABLE ${Qt6Core_CMAKE_EXECUTABLE} IMPORTED_LOCATION)
-
-if(NOT QT_CMAKE_EXECUTABLE)
-    message(FATAL_ERROR "qt-cmake is not found.")
-endif()
-
-# 执行 qt-cmake 命令查询 QT_INSTALL_PLUGINS
-execute_process(COMMAND ${QT_CMAKE_EXECUTABLE} --find-package=Qt6Core --query QT_INSTALL_PLUGINS
-    OUTPUT_VARIABLE QT_PLUGINS_DIR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+set(QT_PLUGINS_DIR "plugins/")
 
 # 输出插件目录路径
 message(STATUS "Qt6 plugins directory: ${QT_PLUGINS_DIR}")
