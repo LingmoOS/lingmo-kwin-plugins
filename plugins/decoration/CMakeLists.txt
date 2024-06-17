@@ -10,9 +10,9 @@ find_package(KF6CoreAddons REQUIRED)
 find_package(KF6Config REQUIRED)
 find_package(KF6WindowSystem REQUIRED)
 find_package(KDecoration2 REQUIRED)
-find_package(Qt5 CONFIG REQUIRED COMPONENTS Gui Widgets Core X11Extras)
+find_package(Qt6 COMPONENTS Gui Widgets Core REQUIRED)
 
-find_package(Qt5 CONFIG REQUIRED COMPONENTS Core Gui)
+find_package(Qt6 COMPONENTS Core Gui REQUIRED)
 
 # 获取qmake
 get_target_property(QT_QMAKE_EXECUTABLE ${Qt5Core_QMAKE_EXECUTABLE} IMPORTED_LOCATION)
@@ -45,7 +45,6 @@ add_library (lingdecoration MODULE
 target_link_libraries (lingdecoration
     PUBLIC
         Qt6::Core
-        Qt6::Gui
         Qt6::Widgets
         Qt6::X11Extras
         KF6::ConfigCore
