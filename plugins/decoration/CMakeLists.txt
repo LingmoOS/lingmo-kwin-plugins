@@ -44,10 +44,10 @@ add_library (lingdecoration MODULE
 
 target_link_libraries (lingdecoration
     PUBLIC
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Widgets
-        Qt5::X11Extras
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        Qt6::X11Extras
         KF6::ConfigCore
         KF6::ConfigGui
         KF6::CoreAddons
