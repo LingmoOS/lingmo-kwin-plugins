@@ -12,7 +12,7 @@ static xcb_atom_t internAtom(const char *name, bool only_if_exists)
         return XCB_NONE;
     
     // 获取 XCB 连接
-    auto *connection = static_cast<xcb_connection_t *>(QGuiApplication::platformNativeInterface()->nativeResourceForIntegration("connection"));
+    xcb_connection_t *connection = getXCBConnection()
 
     xcb_intern_atom_cookie_t cookie = xcb_intern_atom(connection, only_if_exists, strlen(name), name);
     xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(connection, cookie, nullptr);
