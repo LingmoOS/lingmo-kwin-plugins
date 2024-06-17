@@ -6,7 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(KCoreAddons REQUIRED)
+find_package(KF6CoreAddons REQUIRED)
 find_package(KConfig REQUIRED)
 find_package(KWindowSystem REQUIRED)
 find_package(KDecoration2 REQUIRED)
