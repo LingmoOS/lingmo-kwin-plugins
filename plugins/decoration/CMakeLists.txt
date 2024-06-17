@@ -45,8 +45,8 @@ add_library (lingdecoration MODULE
 target_link_libraries (lingdecoration
     PUBLIC
         Qt6::Core
+        Qt6::Gui
         Qt6::Widgets
-        Qt6::X11Extras
         KF6::ConfigCore
         KF6::ConfigGui
         KF6::CoreAddons
