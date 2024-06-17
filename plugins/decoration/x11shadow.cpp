@@ -2,6 +2,7 @@
 
 #include <QGuiApplication>
 #include <xcb/xcb.h>
+#include <X11/Xlib-xcb.h>
 
 static xcb_atom_t internAtom(const char *name, bool only_if_exists)
 {
