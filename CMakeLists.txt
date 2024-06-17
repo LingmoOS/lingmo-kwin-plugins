@@ -1,13 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(ling-kwin-plugins)
-
-set(PROJECT_NAME "ling-kwin")
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
+project(lingmo-kwin-plugins)
 
 add_subdirectory(plugins)
 

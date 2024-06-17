@@ -38,6 +38,8 @@ add_library(roundedwindow MODULE
     resources.qrc
 )
 
+target_include_directories(roundedwindow PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
 target_link_libraries(roundedwindow
     PUBLIC
         Qt5::Core
