@@ -14,22 +14,21 @@ find_package(Qt6 COMPONENTS Gui Widgets Core REQUIRED)
 
 find_package(Qt6 COMPONENTS Core Gui REQUIRED)
 
-# 获取qmake
-get_target_property(QT_QMAKE_EXECUTABLE ${Qt6Core_QMAKE_EXECUTABLE} IMPORTED_LOCATION)
-if(NOT QT_QMAKE_EXECUTABLE)
-    message(FATAL_ERROR "qmake is not found.")
+# 获取 qt-cmake 的路径
+get_target_property(QT_CMAKE_EXECUTABLE ${Qt6Core_CMAKE_EXECUTABLE} IMPORTED_LOCATION)
+
+if(NOT QT_CMAKE_EXECUTABLE)
+    message(FATAL_ERROR "qt-cmake is not found.")
 endif()
 
-# exeling the command "qmake -query QT_INSTALL_PLUGINS" to get the path of plugins dir.
-execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_PLUGINS
-        OUTPUT_VARIABLE QT_PLUGINS_DIR
-        OUTPUT_STRIP_TRAILING_WHITESPACE
+# 执行 qt-cmake 命令查询 QT_INSTALL_PLUGINS
+execute_process(COMMAND ${QT_CMAKE_EXECUTABLE} --find-package=Qt6Core --query QT_INSTALL_PLUGINS
+    OUTPUT_VARIABLE QT_PLUGINS_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-if(QT_PLUGINS_DIR)
-    message(STATUS "Qt6 plugin directory:" "${QT_PLUGINS_DIR}")
-else()
-    message(FATAL_ERROR "Qt6 plugin directory cannot be detected.")
-endif()
+
+# 输出插件目录路径
+message(STATUS "Qt6 plugins directory: ${QT_PLUGINS_DIR}")
 
 set (decoration_SRCS
     decoration.cpp
