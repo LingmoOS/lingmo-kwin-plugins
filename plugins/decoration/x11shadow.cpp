@@ -8,7 +8,8 @@ static xcb_atom_t internAtom(const char *name, bool only_if_exists)
     if (!name || *name == 0)
         return XCB_NONE;
 
-    if (QGuiApplication::platformName() != "xcb")
+    auto isPlatformX11 = qGuiApp->nativeInterface<QNativeInterface::QX11Application>();
+    if (!isPlatformX11())
         return XCB_NONE;
 
     xcb_intern_atom_cookie_t cookie = xcb_intern_atom(QNativeInterface::QX11Application::connection(), only_if_exists, strlen(name), name);
