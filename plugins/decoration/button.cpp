@@ -29,7 +29,7 @@
 Button::Button(KDecoration2::DecorationButtonType type, const QPointer<KDecoration2::Decoration> &decoration, QObject *parent)
     : KDecoration2::DecorationButton(type, decoration, parent)
 {
-    auto c = decoration->client().toStrongRef().data();
+    auto c = decoration->client();
 
     switch (type) {
     case KDecoration2::DecorationButtonType::Menu:
@@ -66,7 +66,7 @@ void Button::paint(QPainter *painter, const QRect &repaintRegion)
     if (!decoration)
         return;
 
-    auto c = decoration->client().toStrongRef().data();
+    auto c = decoration->client();
     const bool isDarkMode = decoration->darkMode();
     const QRect &rect = geometry().toRect();
 
