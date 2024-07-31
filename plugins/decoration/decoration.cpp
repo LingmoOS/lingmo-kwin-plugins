@@ -30,7 +30,6 @@
 #include <QApplication>
 #include <QPainter>
 #include <QSettings>
-#include <QSharedPointer>
 #include <QImageReader>
 #include <QTimer>
 
@@ -49,7 +48,7 @@ static int g_sDecoCount = 0;
 static int g_shadowSize = 0;
 static int g_shadowStrength = 0;
 static QColor g_shadowColor = Qt::black;
-static QSharedPointer<KDecoration2::DecorationShadow> g_sShadow;
+static std::shared_ptr<KDecoration2::DecorationShadow> g_sShadow;
 
 Decoration::Decoration(QObject *parent, const QVariantList &args)
     : KDecoration2::Decoration(parent, args)
@@ -64,20 +63,18 @@ Decoration::Decoration(QObject *parent, const QVariantList &args)
 Decoration::~Decoration()
 {
     if (--g_sDecoCount == 0) {
-        g_sShadow.clear();
+        g_sShadow.reset();
     }
 }
 
 void Decoration::paint(QPainter *painter, const QRect &repaintRegion)
 {
-    auto *decoratedClient = client();
+    auto decoratedClient = client();
     auto s = settings();
 
     painter->fillRect(rect(), Qt::transparent);
 
     if (!decoratedClient->isShaded()) {
-        // paintFrameBackground(painter, repaintRegion);
-
         painter->fillRect(rect(), Qt::transparent);
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing);
@@ -171,6 +168,8 @@ bool Decoration::init()
     // // For some reason, the shadow should be installed the last. Otherwise,
     // // the Window Decorations KCM crashes.
     updateShadow();
+
+    return true;
 }
 
 void Decoration::reconfigure()
@@ -191,12 +190,6 @@ void Decoration::recalculateBorders()
 {
     QMargins borders;
 
-//    if (!isMaximized()) {
-//        borders.setLeft(m_frameRadius / 2);
-//        borders.setRight(m_frameRadius / 2);
-//        borders.setBottom(m_frameRadius / 2);
-//    }
-
     borders.setTop(titleBarHeight());
 
     setBorders(borders);
@@ -216,7 +209,7 @@ void Decoration::updateResizeBorders()
 
 void Decoration::updateTitleBar()
 {
-    auto *decoratedClient = client();
+    auto decoratedClient = client();
     setTitleBar(QRect(0, 0, decoratedClient->width(), titleBarHeight()));
     update(titleBar());
 }
@@ -229,7 +222,6 @@ void Decoration::updateButtonsGeometryDelayed()
 void Decoration::updateButtonsGeometry()
 {
     auto s = settings();
-    // auto c = client().toStrongRef().data();
     int rightMargin = 2;
     int btnSpacing = 8;
 
@@ -259,7 +251,6 @@ void Decoration::updateShadow()
         g_shadowStrength = 35;
         g_shadowColor = Qt::black;
         const int shadowOverlap = m_frameRadius;
-        // const int shadowOffset = qMax(6 * g_shadowSize / 16, shadowOverlap * 2);
         const int shadowOffset = shadowOverlap / 2;
 
         // create image
@@ -267,10 +258,8 @@ void Decoration::updateShadow()
         image.fill(Qt::transparent);
 
         // create gradient
-        // gaussian delta function
-        auto alpha = [](qreal x) { return std::exp( -x*x/0.15 ); };
+        auto alpha = [](qreal x) { return std::exp(-x * x / 0.15); };
 
-        // color calculation delta function
         auto gradientStopColor = [](QColor color, int alpha) {
             color.setAlpha(alpha);
             return color;
@@ -278,49 +267,40 @@ void Decoration::updateShadow()
 
         QRadialGradient radialGradient(g_shadowSize, g_shadowSize, g_shadowSize);
         for (int i = 0; i < 10; ++i) {
-            const qreal x(qreal( i ) / 9);
+            const qreal x(qreal(i) / 9);
             radialGradient.setColorAt(x, gradientStopColor(g_shadowColor, alpha(x) * g_shadowStrength));
         }
 
-        radialGradient.setColorAt(1, gradientStopColor(g_shadowColor, 0 ));
+        radialGradient.setColorAt(1, gradientStopColor(g_shadowColor, 0));
 
         QPainter painter;
-        // fill
         painter.begin(&image);
-        //TODO review these
-        //QPainter painter(&image);
-        painter.setRenderHint( QPainter::Antialiasing, true );
-        painter.fillRect( image.rect(), radialGradient);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.fillRect(image.rect(), radialGradient);
 
-        // contrast pixel
         QRectF innerRect = QRectF(
             g_shadowSize - shadowOverlap, g_shadowSize - shadowOffset - shadowOverlap,
-            2 * shadowOverlap, shadowOffset + 2 * shadowOverlap );
-            // g_shadowSize - shadowOffset - shadowOverlap, g_shadowSize - shadowOffset - shadowOverlap,
-            // shadowOffset + 2*shadowOverlap, shadowOffset + 2*shadowOverlap );
+            2 * shadowOverlap, shadowOffset + 2 * shadowOverlap);
 
-        painter.setPen( gradientStopColor(g_shadowColor, g_shadowStrength * 0.5));
+        painter.setPen(gradientStopColor(g_shadowColor, g_shadowStrength * 0.5));
         painter.setBrush(Qt::NoBrush);
         painter.drawRoundedRect(innerRect, -0.5 + m_frameRadius, -0.5 + m_frameRadius);
 
-        // mask out inner rect
         painter.setPen(Qt::NoPen);
         painter.setBrush(Qt::black);
         painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
         painter.drawRoundedRect(innerRect, 0.5 + m_frameRadius, 0.5 + m_frameRadius);
         painter.end();
 
-        g_sShadow = QSharedPointer<KDecoration2::DecorationShadow>::create();
-        g_sShadow->setPadding( QMargins(
-        // g_shadowSize - shadowOffset - shadowOverlap,
-        g_shadowSize - shadowOverlap,
-        g_shadowSize - shadowOffset - shadowOverlap,
-        g_shadowSize - shadowOverlap,
-        g_shadowSize - shadowOverlap));
+        g_sShadow = std::make_shared<KDecoration2::DecorationShadow>();
+        g_sShadow->setPadding(QMargins(
+            g_shadowSize - shadowOverlap,
+            g_shadowSize - shadowOffset - shadowOverlap,
+            g_shadowSize - shadowOverlap,
+            g_shadowSize - shadowOverlap));
 
         g_sShadow->setInnerShadowRect(QRect(g_shadowSize, g_shadowSize, 1, 1));
 
-        // assign image
         g_sShadow->setShadow(image);
     }
     std::shared_ptr<KDecoration2::DecorationShadow> stdShadow(g_sShadow.data(), [g_sShadow](KDecoration2::DecorationShadow*) mutable {
@@ -355,10 +335,6 @@ QPixmap Decoration::fromSvgToPixmap(const QString &file, const QSize &size)
 int Decoration::titleBarHeight() const
 {
     return m_titleBarHeight * m_devicePixelRatio;
-
-    // const QFontMetrics fontMetrics(settings()->font());
-    // const int baseUnit = settings()->gridUnit();
-    // return qRound(1.5 * baseUnit) + fontMetrics.height();
 }
 
 bool Decoration::darkMode() const
@@ -370,7 +346,6 @@ bool Decoration::darkMode() const
 bool Decoration::radiusAvailable() const
 {
     return !isMaximized();
-    // return client().toStrongRef().data()->adjacentScreenEdges() == Qt::Edges();
 }
 
 bool Decoration::isMaximized() const
@@ -381,8 +356,6 @@ bool Decoration::isMaximized() const
 void Decoration::paintFrameBackground(QPainter *painter, const QRect &repaintRegion) const
 {
     Q_UNUSED(repaintRegion)
-
-    // const auto *decoratedClient = client().toStrongRef().data();
 
     painter->save();
 
@@ -425,8 +398,7 @@ void Decoration::paintCaption(QPainter *painter, const QRect &repaintRegion) con
 
     const QRect availableRect = titleBarRect.adjusted(
         m_leftButtons->geometry().width() + 20, 0,
-        -(m_rightButtons->geometry().width() + 20), 0
-    );
+        -(m_rightButtons->geometry().width() + 20), 0);
 
     QRect captionRect;
     Qt::Alignment alignment;
@@ -443,7 +415,7 @@ void Decoration::paintCaption(QPainter *painter, const QRect &repaintRegion) con
     }
 
     const QString caption = painter->fontMetrics()
-            .elidedText(decoratedClient->caption(), Qt::ElideMiddle, captionRect.width());
+                                .elidedText(decoratedClient->caption(), Qt::ElideMiddle, captionRect.width());
 
     painter->save();
     painter->setFont(settings()->font());
@@ -458,6 +430,6 @@ void Decoration::paintButtons(QPainter *painter, const QRect &repaintRegion) con
     m_rightButtons->paint(painter, repaintRegion);
 }
 
-}
+}  // namespace Lingmo
 
 #include "decoration.moc"
