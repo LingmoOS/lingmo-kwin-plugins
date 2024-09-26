@@ -33,6 +33,7 @@
 #include <QIcon>
 
 #include "x11shadow.h"
+#include "helper.h"
 
 namespace Lingmo
 {
@@ -60,7 +61,12 @@ public:
     qreal devicePixelRatio() const { return m_devicePixelRatio; }
 
 public slots:
+
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11) 
     virtual void init() override;
+#else
+    virtual bool init() override;
+#endif
 
 private:
     void reconfigure();

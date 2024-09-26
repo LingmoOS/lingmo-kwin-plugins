@@ -12,7 +12,13 @@ find_package(KF5WindowSystem REQUIRED)
 find_package(KDecoration2 REQUIRED)
 
 message(STATUS "KDecoration2 version: ${KDecoration2_VERSION}")
-add_compile_definitions(KDECORATION_VERSION=${KDecoration2_VERSION})
+string(REPLACE "." ";" version_parts ${KDecoration2_VERSION})
+list(GET version_parts 0 KDECORATION_MAJOR)
+list(GET version_parts 1 KDECORATION_MINOR)
+list(GET version_parts 2 KDECORATION_PATCH)
+add_compile_definitions(KDECORATION_MAJOR=${KDECORATION_MAJOR})
+add_compile_definitions(KDECORATION_MINOR=${KDECORATION_MINOR})
+add_compile_definitions(KDECORATION_PATCH=${KDECORATION_PATCH})
 
 find_package(Qt5 CONFIG REQUIRED COMPONENTS Gui Widgets Core X11Extras)
 
