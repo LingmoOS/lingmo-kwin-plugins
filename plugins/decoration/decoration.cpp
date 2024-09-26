@@ -310,7 +310,7 @@ void Decoration::updateShadow()
         painter.drawRoundedRect(innerRect, 0.5 + m_frameRadius, 0.5 + m_frameRadius);
         painter.end();
 
-        g_sShadow = QSharedPointer<KDecoration2::DecorationShadow>();
+        g_sShadow = QSharedPointer<KDecoration2::DecorationShadow>::create();
         g_sShadow->setPadding(QMargins(
             g_shadowSize - shadowOverlap,
             g_shadowSize - shadowOffset - shadowOverlap,
