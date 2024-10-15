@@ -19,6 +19,7 @@
 
 #include "button.h"
 #include "decoration.h"
+#include "helper.h"
 
 #include <KDecoration2/DecoratedClient>
 #include <KDecoration2/Decoration>
@@ -29,7 +30,11 @@
 Button::Button(KDecoration2::DecorationButtonType type, const QPointer<KDecoration2::Decoration> &decoration, QObject *parent)
     : KDecoration2::DecorationButton(type, decoration, parent)
 {
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
     auto c = decoration->client().toStrongRef().data();
+#else
+    auto c = decoration->client();
+#endif 
 
     switch (type) {
     case KDecoration2::DecorationButtonType::Menu:
@@ -66,7 +71,11 @@ void Button::paint(QPainter *painter, const QRect &repaintRegion)
     if (!decoration)
         return;
 
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
     auto c = decoration->client().toStrongRef().data();
+#else
+    auto c = decoration->client();
+#endif 
     const bool isDarkMode = decoration->darkMode();
     const QRect &rect = geometry().toRect();
 
