@@ -4,7 +4,7 @@ KWin plugin for LingmoOS, which is a necessary component of LingmoOS
 
 ## Dependencies
 
-`sudo pacman -S extra-cmake-modules qt5-base qt5-declarative kconfig kdecoration kguiaddons kcoreaddons kconfigwidgets kwindowsystem kwayland kwin`
+`sudo pacman -S extra-cmake-modules qt5-base qt5-declarative kconfig5 kdecoration5 kguiaddons5 kcoreaddons5 kconfigwidgets5 kwindowsystem5 kwayland kwin`
 
 ## Build
 
