@@ -1,4 +1,4 @@
-lingmo-kwin-plugins (1.2.1) unstable; urgency=high
+lingmo-kwin-plugins (1.2.3) unstable; urgency=high
 
   [ Elysia ]
   * Add compability to higher version of KDecoration2
