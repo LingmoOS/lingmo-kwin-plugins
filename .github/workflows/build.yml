@@ -67,5 +67,5 @@ jobs:
       
     - name: Build Package
       run: |
-        mkdir build-arch && cd build-arch && cmake .. && make -j$(nproc)
+        mkdir build-arch && cd build-arch && cmake -DCMAKE_PREFIX_PATH=/usr/lib/cmake/plasma5/KDecoration2 .. && make -j$(nproc)
   
