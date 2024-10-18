@@ -65,7 +65,7 @@ jobs:
         submodules: 'true'
 
     - name: Install the basic dev packages
-      run: sudo -u builder sh -c 'sudo pacman -S extra-cmake-modules qt5-base qt5-declarative kconfig kdecoration kguiaddons kcoreaddons kconfigwidgets kwindowsystem kwayland kwin'
+      run: sudo -u builder sh -c 'sudo pacman -Syu --noconfirm extra-cmake-modules qt5-base qt5-declarative kconfig kdecoration kguiaddons kcoreaddons kconfigwidgets kwindowsystem kwayland kwin'
       
     - name: Build Package
       run: |
