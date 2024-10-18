@@ -38,12 +38,14 @@ jobs:
     - name: Build Package
       run: |
         dpkg-buildpackage -b -uc -us -j$(nproc)
+        mkdir artifacts
+        mv ../*.deb ./artifacts/
     
     - uses: actions/upload-artifact@v4
       with:
         name: lingmo-kwin-plugins
         path: |
-          ../*.deb
+          artifacts/*
         compression-level: 9 # maximum compression
 
   arch-linux:
