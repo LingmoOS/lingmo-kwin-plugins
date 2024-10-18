@@ -16,16 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     container: docker.io/library/debian:trixie-slim
     steps:
-    - name: Checkout Source
-      uses: actions/checkout@v4
-      with:
-        submodules: 'true'
-
     - name: Update repository
       run: apt-get update -y
 
     - name: Install the basic dev packages
       run: apt-get install -y equivs curl git devscripts lintian build-essential automake autotools-dev cmake g++
+
+    - name: Checkout Source
+      uses: actions/checkout@v4
+      with:
+        submodules: 'true'
     
     - name: Install build dependencies
       run: mk-build-deps -i -t "apt --yes --no-install-recommends" -r
