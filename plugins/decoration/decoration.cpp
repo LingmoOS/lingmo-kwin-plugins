@@ -63,16 +63,16 @@ Decoration::Decoration(QObject *parent, const QVariantList &args)
 Decoration::~Decoration()
 {
     if (--g_sDecoCount == 0) {
-        g_sShadow.reset();
+        g_sShadow.clear();
     }
 }
 
 void Decoration::paint(QPainter *painter, const QRect &repaintRegion)
 {
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
-    auto decoratedClient = client().toStrongRef().data();
+    auto *decoratedClient = client().toStrongRef().data();
 #else
-    auto decoratedClient = client();
+    auto *decoratedClient = client();
 #endif
     auto s = settings();
 
@@ -224,9 +224,9 @@ void Decoration::updateResizeBorders()
 void Decoration::updateTitleBar()
 {
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
-    auto decoratedClient = client().toStrongRef().data();
+    auto *decoratedClient = client().toStrongRef().data();
 #else
-    auto decoratedClient = client().data();
+    auto *decoratedClient = client().data();
 #endif
     setTitleBar(QRect(0, 0, decoratedClient->width(), titleBarHeight()));
     update(titleBar());
@@ -292,10 +292,14 @@ void Decoration::updateShadow()
         radialGradient.setColorAt(1, gradientStopColor(g_shadowColor, 0));
 
         QPainter painter;
+        // fill
         painter.begin(&image);
+        //TODO review these
+        //QPainter painter(&image);
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.fillRect(image.rect(), radialGradient);
 
+        // contrast pixel
         QRectF innerRect = QRectF(
             g_shadowSize - shadowOverlap, g_shadowSize - shadowOffset - shadowOverlap,
             2 * shadowOverlap, shadowOffset + 2 * shadowOverlap);
@@ -304,6 +308,7 @@ void Decoration::updateShadow()
         painter.setBrush(Qt::NoBrush);
         painter.drawRoundedRect(innerRect, -0.5 + m_frameRadius, -0.5 + m_frameRadius);
 
+        // mask out inner rect
         painter.setPen(Qt::NoPen);
         painter.setBrush(Qt::black);
         painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
@@ -319,6 +324,7 @@ void Decoration::updateShadow()
 
         g_sShadow->setInnerShadowRect(QRect(g_shadowSize, g_shadowSize, 1, 1));
 
+        // assign image
         g_sShadow->setShadow(image);
     }
 

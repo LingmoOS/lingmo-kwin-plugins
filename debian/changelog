@@ -1,3 +1,10 @@
+lingmo-kwin-plugins (1.2.3) unstable; urgency=high
+
+  [ Elysia ]
+  * Add compability to higher version of KDecoration2
+
+ -- Lingmo DE Team <team@lingmo.org>  Fri, 18 Oct 2024 17:11:08 +0800
+
 lingmo-kwin-plugins (1.2.0-0) UNRELEASED; urgency=low
 
   * Move roundwindow plugin into new repo lingmo-kwin-plugins-roundedwindow
