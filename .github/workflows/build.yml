@@ -69,5 +69,5 @@ jobs:
       
     - name: Build Package
       run: |
-        sudo -u builder sh -c 'cd $(pwd) && mkdir build-arch && cd build-arch && cmake .. && make -j$(nproc)'
+        mkdir build-arch && cd build-arch && cmake .. && make -j$(nproc)
   
