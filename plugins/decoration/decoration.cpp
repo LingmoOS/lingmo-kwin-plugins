@@ -70,9 +70,9 @@ Decoration::~Decoration()
 void Decoration::paint(QPainter *painter, const QRect &repaintRegion)
 {
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
-    auto decoratedClient = client().toStrongRef().data();
+    auto *decoratedClient = client().toStrongRef().data();
 #else
-    auto decoratedClient = client();
+    auto *decoratedClient = client();
 #endif
     auto s = settings();
 
@@ -224,9 +224,9 @@ void Decoration::updateResizeBorders()
 void Decoration::updateTitleBar()
 {
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
-    auto decoratedClient = client().toStrongRef().data();
+    auto *decoratedClient = client().toStrongRef().data();
 #else
-    auto decoratedClient = client().data();
+    auto *decoratedClient = client().data();
 #endif
     setTitleBar(QRect(0, 0, decoratedClient->width(), titleBarHeight()));
     update(titleBar());
