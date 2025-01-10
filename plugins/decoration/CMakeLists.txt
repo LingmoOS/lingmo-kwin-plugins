@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 find_package(KF5CoreAddons 5...6 REQUIRED)
 find_package(KF5Config 5...6 REQUIRED)
 find_package(KF5WindowSystem 5...6 REQUIRED)
-find_package(KDecoration2 5...6 REQUIRED)
+find_package(KDecoration2 5...6.6 REQUIRED)
 
 message(STATUS "KDecoration2 version: ${KDecoration2_VERSION}")
 string(REPLACE "." ";" version_parts ${KDecoration2_VERSION})

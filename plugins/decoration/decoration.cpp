@@ -226,7 +226,7 @@ void Decoration::updateTitleBar()
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
     auto *decoratedClient = client().toStrongRef().data();
 #else
-    auto *decoratedClient = client().data();
+    auto *decoratedClient = client();
 #endif
     setTitleBar(QRect(0, 0, decoratedClient->width(), titleBarHeight()));
     update(titleBar());
@@ -328,7 +328,13 @@ void Decoration::updateShadow()
         g_sShadow->setShadow(image);
     }
 
-    setShadow(g_sShadow);
+    //setShadow(g_sShadow.toStdShared());
+    auto rawPtr = g_sShadow.data();
+    if (rawPtr) {
+    	std::shared_ptr<KDecoration2::DecorationShadow> stdShared(rawPtr);
+    	setShadow(stdShared);
+    }
+
 }
 
 void Decoration::updateBtnPixmap()
