@@ -69,7 +69,7 @@ Decoration::~Decoration()
 
 void Decoration::paint(QPainter *painter, const QRect &repaintRegion)
 {
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
     auto *decoratedClient = client().toStrongRef().data();
 #else
     auto *decoratedClient = client();
@@ -101,13 +101,13 @@ void Decoration::paint(QPainter *painter, const QRect &repaintRegion)
     paintButtons(painter, repaintRegion);
 }
 
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11) 
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12) 
 void Decoration::init()
 #else
 bool Decoration::init()
 #endif
 {   
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11) 
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12) 
     auto c = client().toStrongRef().data();
 #else
     auto c = client();
@@ -181,7 +181,7 @@ bool Decoration::init()
     // // the Window Decorations KCM crashes.
     updateShadow();
 
-#if KDECORATION_VERSION > QT_VERSION_CHECK(5, 27, 11)
+#if KDECORATION_VERSION > QT_VERSION_CHECK(5, 27, 12)
     return true;
 #endif
 }
@@ -223,7 +223,7 @@ void Decoration::updateResizeBorders()
 
 void Decoration::updateTitleBar()
 {
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
     auto *decoratedClient = client().toStrongRef().data();
 #else
     auto *decoratedClient = client().data();
@@ -372,7 +372,7 @@ bool Decoration::radiusAvailable() const
 
 bool Decoration::isMaximized() const
 {
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
     return client().toStrongRef().data()->isMaximized();
 #else
     return client()->isMaximized();
@@ -398,7 +398,7 @@ QColor Decoration::titleBarBackgroundColor() const
 
 QColor Decoration::titleBarForegroundColor() const
 {
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
     const auto *decoratedClient = client().toStrongRef().data();
 #else
     const auto *decoratedClient = client();
@@ -418,7 +418,7 @@ QColor Decoration::titleBarForegroundColor() const
 void Decoration::paintCaption(QPainter *painter, const QRect &repaintRegion) const
 {
     Q_UNUSED(repaintRegion)
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
     const auto *decoratedClient = client().toStrongRef().data();
 #else
     const auto *decoratedClient = client();
