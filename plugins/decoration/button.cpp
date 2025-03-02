@@ -30,7 +30,7 @@
 Button::Button(KDecoration2::DecorationButtonType type, const QPointer<KDecoration2::Decoration> &decoration, QObject *parent)
     : KDecoration2::DecorationButton(type, decoration, parent)
 {
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
     auto c = decoration->client().toStrongRef().data();
 #else
     auto c = decoration->client();
@@ -71,7 +71,7 @@ void Button::paint(QPainter *painter, const QRect &repaintRegion)
     if (!decoration)
         return;
 
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11)
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
     auto c = decoration->client().toStrongRef().data();
 #else
     auto c = decoration->client();
