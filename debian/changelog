@@ -1,3 +1,10 @@
+lingmo-kwin-plugins (1.2.4) unstable; urgency=high
+
+  [ Elysia ]
+  * Add compability to higher version of KDecoration2 (5.27.12)
+
+ -- Lingmo DE Team <team@lingmo.org>  Sun, 2 Mar 2024 07:10:12 +0000
+
 lingmo-kwin-plugins (1.2.3) unstable; urgency=high
 
   [ Elysia ]

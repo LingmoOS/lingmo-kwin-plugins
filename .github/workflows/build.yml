@@ -13,9 +13,9 @@ on:
 
 jobs:
   debian-13:
-    name: Debian 13
+    name: Debian 12
     runs-on: ubuntu-latest
-    container: docker.io/library/debian:trixie-slim
+    container: docker.io/library/debian:bookworm-slim
     steps:
     - name: Update repository
       run: apt-get update -y

@@ -62,7 +62,7 @@ public:
 
 public slots:
 
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11) 
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12) 
     virtual void init() override;
 #else
     virtual bool init() override;
