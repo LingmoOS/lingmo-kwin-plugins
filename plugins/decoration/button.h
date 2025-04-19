@@ -21,17 +21,17 @@
 #define BUTTON_H
 
 #include <memory>
-#include <KDecoration2/DecorationButton>
+#include <KDecoration3/DecorationButton>
 
-class Button : KDecoration2::DecorationButton
+class Button : KDecoration3::DecorationButton
 {
 public:
-    explicit Button(KDecoration2::DecorationButtonType type, const QPointer<KDecoration2::Decoration> &decoration, QObject *parent = nullptr);
+    explicit Button(KDecoration3::DecorationButtonType type, const QPointer<KDecoration3::Decoration> &decoration, QObject *parent = nullptr);
 
-    static DecorationButton *create(KDecoration2::DecorationButtonType type, KDecoration2::Decoration *decoration, QObject *parent);
+    static DecorationButton *create(KDecoration3::DecorationButtonType type, KDecoration3::Decoration *decoration, QObject *parent);
 
 protected:
-    virtual void paint(QPainter *painter, const QRect &repaintRegion) override;
+    virtual void paint(QPainter *painter, const QRectF &repaintArea) override;
 };
 
 #endif // BUTTON_H

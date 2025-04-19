@@ -62,7 +62,7 @@ Left=None
 Right=None
 Top=None
 
-[org.kde.kdecoration2]
+[org.kde.kdecoration3]
 BorderSize=Normal
 ButtonsOnLeft=
 ButtonsOnRight=HIAX

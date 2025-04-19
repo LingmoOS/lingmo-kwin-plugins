@@ -22,9 +22,9 @@
 #include "button.h"
 
 // KDecoration
-#include <KDecoration2/DecoratedClient>
-#include <KDecoration2/DecorationSettings>
-#include <KDecoration2/DecorationShadow>
+#include <KDecoration3/DecoratedWindow>
+#include <KDecoration3/DecorationSettings>
+#include <KDecoration3/DecorationShadow>
 
 // Qt
 #include <QApplication>
@@ -36,6 +36,7 @@
 #include <KPluginFactory>
 
 #include <cmath>
+#include <memory>
 
 K_PLUGIN_FACTORY_WITH_JSON(
     LingmoDecorationFactory,
@@ -48,10 +49,10 @@ static int g_sDecoCount = 0;
 static int g_shadowSize = 0;
 static int g_shadowStrength = 0;
 static QColor g_shadowColor = Qt::black;
-static QSharedPointer<KDecoration2::DecorationShadow> g_sShadow;
+static std::shared_ptr<KDecoration3::DecorationShadow> g_sShadow;
 
 Decoration::Decoration(QObject *parent, const QVariantList &args)
-    : KDecoration2::Decoration(parent, args)
+    : KDecoration3::Decoration(parent, args)
     , m_settings(new QSettings(QSettings::UserScope, "lingmoos", "theme"))
     , m_settingsFile(m_settings->fileName())
     , m_fileWatcher(new QFileSystemWatcher)
@@ -63,22 +64,22 @@ Decoration::Decoration(QObject *parent, const QVariantList &args)
 Decoration::~Decoration()
 {
     if (--g_sDecoCount == 0) {
-        g_sShadow.clear();
+        g_sShadow.reset();
     }
 }
 
-void Decoration::paint(QPainter *painter, const QRect &repaintRegion)
+void Decoration::paint(QPainter *painter, const QRectF &repaintArea)
 {
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
-    auto *decoratedClient = client().toStrongRef().data();
+    auto *DecoratedWindow = client().toStrongRef().data();
 #else
-    auto *decoratedClient = client();
+    auto *DecoratedWindow = window();
 #endif
     auto s = settings();
 
     painter->fillRect(rect(), Qt::transparent);
 
-    if (!decoratedClient->isShaded()) {
+    if (!DecoratedWindow->isShaded()) {
         painter->fillRect(rect(), Qt::transparent);
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing);
@@ -93,12 +94,12 @@ void Decoration::paint(QPainter *painter, const QRect &repaintRegion)
         painter->restore();
 
         // draw buttons.
-        m_leftButtons->paint(painter, repaintRegion);
-        m_rightButtons->paint(painter, repaintRegion);
+        m_leftButtons->paint(painter, repaintArea);
+        m_rightButtons->paint(painter, repaintArea);
     }
 
-    paintCaption(painter, repaintRegion);
-    paintButtons(painter, repaintRegion);
+    paintCaption(painter, repaintArea);
+    paintButtons(painter, repaintArea);
 }
 
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12) 
@@ -110,7 +111,7 @@ bool Decoration::init()
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12) 
     auto c = client().toStrongRef().data();
 #else
-    auto c = client();
+    auto c = window();
 #endif
     auto s = settings();
 
@@ -120,42 +121,42 @@ bool Decoration::init()
     reconfigure();
     updateTitleBar();
 
-    connect(s.get(), &KDecoration2::DecorationSettings::borderSizeChanged, this, &Decoration::recalculateBorders);
+    connect(s.get(), &KDecoration3::DecorationSettings::borderSizeChanged, this, &Decoration::recalculateBorders);
 
     // a change in font might cause the borders to change
-    connect(s.get(), &KDecoration2::DecorationSettings::fontChanged, this, &Decoration::recalculateBorders);
-    connect(s.get(), &KDecoration2::DecorationSettings::spacingChanged, this, &Decoration::recalculateBorders);
+    connect(s.get(), &KDecoration3::DecorationSettings::fontChanged, this, &Decoration::recalculateBorders);
+    connect(s.get(), &KDecoration3::DecorationSettings::spacingChanged, this, &Decoration::recalculateBorders);
 
     // full reconfiguration
-    connect(s.get(), &KDecoration2::DecorationSettings::reconfigured, this, &Decoration::reconfigure);
-    connect(s.get(), &KDecoration2::DecorationSettings::reconfigured, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(s.get(), &KDecoration3::DecorationSettings::reconfigured, this, &Decoration::reconfigure);
+    connect(s.get(), &KDecoration3::DecorationSettings::reconfigured, this, &Decoration::updateButtonsGeometryDelayed);
 
     // buttons
-    connect(s.get(), &KDecoration2::DecorationSettings::spacingChanged, this, &Decoration::updateButtonsGeometryDelayed);
-    connect(s.get(), &KDecoration2::DecorationSettings::decorationButtonsLeftChanged, this, &Decoration::updateButtonsGeometryDelayed);
-    connect(s.get(), &KDecoration2::DecorationSettings::decorationButtonsRightChanged, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(s.get(), &KDecoration3::DecorationSettings::spacingChanged, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(s.get(), &KDecoration3::DecorationSettings::decorationButtonsLeftChanged, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(s.get(), &KDecoration3::DecorationSettings::decorationButtonsRightChanged, this, &Decoration::updateButtonsGeometryDelayed);
 
-    connect(c, &KDecoration2::DecoratedClient::adjacentScreenEdgesChanged, this, &Decoration::recalculateBorders);
-    connect(c, &KDecoration2::DecoratedClient::maximizedHorizontallyChanged, this, &Decoration::recalculateBorders);
-    connect(c, &KDecoration2::DecoratedClient::maximizedVerticallyChanged, this, &Decoration::recalculateBorders);
-    connect(c, &KDecoration2::DecoratedClient::shadedChanged, this, &Decoration::recalculateBorders);
-    connect(c, &KDecoration2::DecoratedClient::captionChanged, this, [this]() {
+    connect(c, &KDecoration3::DecoratedWindow::adjacentScreenEdgesChanged, this, &Decoration::recalculateBorders);
+    connect(c, &KDecoration3::DecoratedWindow::maximizedHorizontallyChanged, this, &Decoration::recalculateBorders);
+    connect(c, &KDecoration3::DecoratedWindow::maximizedVerticallyChanged, this, &Decoration::recalculateBorders);
+    connect(c, &KDecoration3::DecoratedWindow::shadedChanged, this, &Decoration::recalculateBorders);
+    connect(c, &KDecoration3::DecoratedWindow::captionChanged, this, [this]() {
         // update the caption area
         update(titleBar());
     });
 
-    connect(c, &KDecoration2::DecoratedClient::activeChanged, this, [this] {
+    connect(c, &KDecoration3::DecoratedWindow::activeChanged, this, [this] {
         update(titleBar());
     });
 
-    connect(c, &KDecoration2::DecoratedClient::widthChanged, this, &Decoration::updateTitleBar);
+    connect(c, &KDecoration3::DecoratedWindow::widthChanged, this, &Decoration::updateTitleBar);
 
-    connect(c, &KDecoration2::DecoratedClient::maximizedChanged, this, &Decoration::updateTitleBar);
-    connect(c, &KDecoration2::DecoratedClient::maximizedChanged, this, &Decoration::updateButtonsGeometry);
+    connect(c, &KDecoration3::DecoratedWindow::maximizedChanged, this, &Decoration::updateTitleBar);
+    connect(c, &KDecoration3::DecoratedWindow::maximizedChanged, this, &Decoration::updateButtonsGeometry);
 
-    connect(c, &KDecoration2::DecoratedClient::widthChanged, this, &Decoration::updateButtonsGeometry);
-    connect(c, &KDecoration2::DecoratedClient::adjacentScreenEdgesChanged, this, &Decoration::updateButtonsGeometry);
-    connect(c, &KDecoration2::DecoratedClient::shadedChanged, this, &Decoration::updateButtonsGeometry);
+    connect(c, &KDecoration3::DecoratedWindow::widthChanged, this, &Decoration::updateButtonsGeometry);
+    connect(c, &KDecoration3::DecoratedWindow::adjacentScreenEdgesChanged, this, &Decoration::updateButtonsGeometry);
+    connect(c, &KDecoration3::DecoratedWindow::shadedChanged, this, &Decoration::updateButtonsGeometry);
 
     // lingmoos settings
     m_fileWatcher->addPath(m_settingsFile);
@@ -195,8 +196,8 @@ void Decoration::reconfigure()
 
 void Decoration::createButtons()
 {
-    m_leftButtons = new KDecoration2::DecorationButtonGroup(KDecoration2::DecorationButtonGroup::Position::Left, this, &Button::create);
-    m_rightButtons = new KDecoration2::DecorationButtonGroup(KDecoration2::DecorationButtonGroup::Position::Right, this, &Button::create);
+    m_leftButtons = new KDecoration3::DecorationButtonGroup(KDecoration3::DecorationButtonGroup::Position::Left, this, &Button::create);
+    m_rightButtons = new KDecoration3::DecorationButtonGroup(KDecoration3::DecorationButtonGroup::Position::Right, this, &Button::create);
     updateButtonsGeometry();
 }
 
@@ -224,11 +225,11 @@ void Decoration::updateResizeBorders()
 void Decoration::updateTitleBar()
 {
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
-    auto *decoratedClient = client().toStrongRef().data();
+    auto *DecoratedWindow = client().toStrongRef().data();
 #else
-    auto *decoratedClient = client().data();
+    auto *DecoratedWindow = window();
 #endif
-    setTitleBar(QRect(0, 0, decoratedClient->width(), titleBarHeight()));
+    setTitleBar(QRect(0, 0, DecoratedWindow->width(), titleBarHeight()));
     update(titleBar());
 }
 
@@ -243,7 +244,7 @@ void Decoration::updateButtonsGeometry()
     int rightMargin = 2;
     int btnSpacing = 8;
 
-    foreach (const QPointer<KDecoration2::DecorationButton> &button, m_leftButtons->buttons() + m_rightButtons->buttons()) {
+    foreach (const QPointer<KDecoration3::DecorationButton> &button, m_leftButtons->buttons() + m_rightButtons->buttons()) {
         button.data()->setGeometry(QRectF(QPoint(0, 0), QSizeF(titleBarHeight(), titleBarHeight())));
     }
 
@@ -315,7 +316,7 @@ void Decoration::updateShadow()
         painter.drawRoundedRect(innerRect, 0.5 + m_frameRadius, 0.5 + m_frameRadius);
         painter.end();
 
-        g_sShadow = QSharedPointer<KDecoration2::DecorationShadow>::create();
+        g_sShadow = std::make_shared<KDecoration3::DecorationShadow>();
         g_sShadow->setPadding(QMargins(
             g_shadowSize - shadowOverlap,
             g_shadowSize - shadowOffset - shadowOverlap,
@@ -327,7 +328,6 @@ void Decoration::updateShadow()
         // assign image
         g_sShadow->setShadow(image);
     }
-
     setShadow(g_sShadow);
 }
 
@@ -375,13 +375,13 @@ bool Decoration::isMaximized() const
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
     return client().toStrongRef().data()->isMaximized();
 #else
-    return client()->isMaximized();
+    return window()->isMaximized();
 #endif
 }
 
-void Decoration::paintFrameBackground(QPainter *painter, const QRect &repaintRegion) const
+void Decoration::paintFrameBackground(QPainter *painter, const QRectF &repaintArea) const
 {
-    Q_UNUSED(repaintRegion)
+    Q_UNUSED(repaintArea)
 
     painter->save();
 
@@ -399,11 +399,11 @@ QColor Decoration::titleBarBackgroundColor() const
 QColor Decoration::titleBarForegroundColor() const
 {
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
-    const auto *decoratedClient = client().toStrongRef().data();
+    const auto *DecoratedWindow = client().toStrongRef().data();
 #else
-    const auto *decoratedClient = client();
+    const auto *DecoratedWindow = window();
 #endif
-    const bool isActive = decoratedClient->isActive();
+    const bool isActive = DecoratedWindow->isActive();
     QColor color;
 
     if (isActive) {
@@ -415,16 +415,16 @@ QColor Decoration::titleBarForegroundColor() const
     return color;
 }
 
-void Decoration::paintCaption(QPainter *painter, const QRect &repaintRegion) const
+void Decoration::paintCaption(QPainter *painter, const QRectF &repaintArea) const
 {
-    Q_UNUSED(repaintRegion)
+    Q_UNUSED(repaintArea)
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12)
-    const auto *decoratedClient = client().toStrongRef().data();
+    const auto *DecoratedWindow = client().toStrongRef().data();
 #else
-    const auto *decoratedClient = client();
+    const auto *DecoratedWindow = window();
 #endif
 
-    const int textWidth = settings()->fontMetrics().boundingRect(decoratedClient->caption()).width();
+    const int textWidth = settings()->fontMetrics().boundingRect(DecoratedWindow->caption()).width();
     const QRect textRect((size().width() - textWidth) / 2, 0, textWidth, titleBarHeight());
 
     const QRect titleBarRect(0, 0, size().width(), titleBarHeight());
@@ -448,7 +448,7 @@ void Decoration::paintCaption(QPainter *painter, const QRect &repaintRegion) con
     }
 
     const QString caption = painter->fontMetrics()
-                                .elidedText(decoratedClient->caption(), Qt::ElideMiddle, captionRect.width());
+                                .elidedText(DecoratedWindow->caption(), Qt::ElideMiddle, captionRect.width());
 
     painter->save();
     painter->setFont(settings()->font());
@@ -457,10 +457,10 @@ void Decoration::paintCaption(QPainter *painter, const QRect &repaintRegion) con
     painter->restore();
 }
 
-void Decoration::paintButtons(QPainter *painter, const QRect &repaintRegion) const
+void Decoration::paintButtons(QPainter *painter, const QRectF &repaintArea) const
 {
-    m_leftButtons->paint(painter, repaintRegion);
-    m_rightButtons->paint(painter, repaintRegion);
+    m_leftButtons->paint(painter, repaintArea);
+    m_rightButtons->paint(painter, repaintArea);
 }
 
 }  // namespace Lingmo
