@@ -1,6 +1,11 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.15)
 
 project(lingmo-kwin-plugins)
+
+find_package(ECM REQUIRED NO_MODULE)
+
+list(APPEND CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+message(STATUS "ECM version: ${ECM_VERSION}")
 
 add_subdirectory(plugins)
 

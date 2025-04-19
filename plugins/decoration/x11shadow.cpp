@@ -1,6 +1,6 @@
 #include "x11shadow.h"
 
-#include <QX11Info>
+#include <QGuiApplication>
 #include <xcb/xcb.h>
 
 static xcb_atom_t internAtom(const char *name, bool only_if_exists)
@@ -8,11 +8,12 @@ static xcb_atom_t internAtom(const char *name, bool only_if_exists)
     if (!name || *name == 0)
         return XCB_NONE;
 
-    if (!QX11Info::isPlatformX11())
+    auto *x11Application = qGuiApp->nativeInterface<QNativeInterface::QX11Application>();
+    if (x11Application == nullptr)
         return XCB_NONE;
 
-    xcb_intern_atom_cookie_t cookie = xcb_intern_atom(QX11Info::connection(), only_if_exists, strlen(name), name);
-    xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(QX11Info::connection(), cookie, 0);
+    xcb_intern_atom_cookie_t cookie = xcb_intern_atom(x11Application->connection() , only_if_exists, strlen(name), name);
+    xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(x11Application->connection(), cookie, 0);
 
     if (!reply)
         return XCB_NONE;
