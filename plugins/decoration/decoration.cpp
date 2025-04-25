@@ -303,8 +303,10 @@ void Decoration::updateShadow()
 
         g_sShadow->setShadow(image);
     }
-
-    setShadow(g_sShadow);
+    std::shared_ptr<KDecoration2::DecorationShadow> stdShadow(g_sShadow.data(), [g_sShadow](KDecoration2::DecorationShadow*) mutable {
+        g_sShadow.reset();
+    });
+    setShadow(stdShadow);
 }
 
 void Decoration::updateBtnPixmap()

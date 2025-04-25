@@ -6,30 +6,18 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(KF5CoreAddons REQUIRED)
-find_package(KF5Config REQUIRED)
-find_package(KF5WindowSystem REQUIRED)
+find_package(KF6CoreAddons REQUIRED)
+find_package(KF6Config REQUIRED)
+find_package(KF6WindowSystem REQUIRED)
 find_package(KDecoration2 REQUIRED)
-find_package(Qt5 CONFIG REQUIRED COMPONENTS Gui Widgets Core X11Extras)
+find_package(Qt6 COMPONENTS Gui Widgets Core REQUIRED)
 
-find_package(Qt5 CONFIG REQUIRED COMPONENTS Core Gui)
+find_package(Qt6 COMPONENTS Core Gui REQUIRED)
 
-# 获取qmake
-get_target_property(QT_QMAKE_EXECUTABLE ${Qt5Core_QMAKE_EXECUTABLE} IMPORTED_LOCATION)
-if(NOT QT_QMAKE_EXECUTABLE)
-    message(FATAL_ERROR "qmake is not found.")
-endif()
+set(QT_PLUGINS_DIR "plugins/")
 
-# exeling the command "qmake -query QT_INSTALL_PLUGINS" to get the path of plugins dir.
-execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_PLUGINS
-        OUTPUT_VARIABLE QT_PLUGINS_DIR
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-if(QT_PLUGINS_DIR)
-    message(STATUS "Qt5 plugin directory:" "${QT_PLUGINS_DIR}")
-else()
-    message(FATAL_ERROR "Qt5 plugin directory cannot be detected.")
-endif()
+# 输出插件目录路径
+message(STATUS "Qt6 plugins directory: ${QT_PLUGINS_DIR}")
 
 set (decoration_SRCS
     decoration.cpp
@@ -44,14 +32,13 @@ add_library (lingdecoration MODULE
 
 target_link_libraries (lingdecoration
     PUBLIC
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Widgets
-        Qt5::X11Extras
-        KF5::ConfigCore
-        KF5::ConfigGui
-        KF5::CoreAddons
-        KF5::WindowSystem
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        KF6::ConfigCore
+        KF6::ConfigGui
+        KF6::CoreAddons
+        KF6::WindowSystem
 
     PRIVATE
         KDecoration2::KDecoration
