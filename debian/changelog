@@ -1,17 +1,16 @@
-lingmo-kwin-plugins (1.3.0) unstable; urgency=high
+lingmo-kwin-plugins (1.2.6+lingmo3build1) helium; urgency=medium
 
-  [ Elysia ]
-  * ! igrate to Qt6 and KDecoration3
-  * Delete old roundwindow plugin
+  [Lingmo OS Team]
+  * Remove decoration.
 
- -- Lingmo DE Team <team@lingmo.org>  Sat, 19 Apr 2025 18:41:47 +0800
+ -- Lingmo OS Team <team@lingmo.org>  Tue, 19 Aug 2025 16:40:00 +0800
 
-lingmo-kwin-plugins (1.2.4) unstable; urgency=high
+lingmo-kwin-plugins (1.2.4+lingmo3build1) helium; urgency=medium
 
-  [ Elysia ]
-  * Add compability to higher version of KDecoration2 (5.27.12)
+  [Lingmo OS Team]
+  * Specification version number.
 
- -- Lingmo DE Team <team@lingmo.org>  Sun, 2 Mar 2024 07:10:12 +0000
+ -- Lingmo OS Team <team@lingmo.org>  Sun, 27 Jul 2025 18:51:42 +0800
 
 lingmo-kwin-plugins (1.2.3) unstable; urgency=high
 

@@ -9,13 +9,12 @@ on:
       - "*.*.*"
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   debian-13:
-    name: Debian 12
+    name: Debian 13
     runs-on: ubuntu-latest
-    container: docker.io/library/debian:bookworm-slim
+    container: docker.io/library/debian:trixie-slim
     steps:
     - name: Update repository
       run: apt-get update -y

@@ -23,8 +23,8 @@
 #include <memory>
 
 // KDecoration
-#include <KDecoration3/Decoration>
-#include <KDecoration3/DecorationButtonGroup>
+#include <KDecoration2/Decoration>
+#include <KDecoration2/DecorationButtonGroup>
 
 // Qt
 #include <QFileSystemWatcher>
@@ -42,7 +42,7 @@ class CloseButton;
 class MaximizeButton;
 class MinimizeButton;
 
-class Decoration : public KDecoration3::Decoration
+class Decoration : public KDecoration2::Decoration
 {
     Q_OBJECT
 
@@ -50,7 +50,7 @@ public:
     Decoration(QObject *parent = nullptr, const QVariantList &args = QVariantList());
     ~Decoration() override;
 
-    virtual void paint(QPainter *painter, const QRectF &repaintArea) override;
+    virtual void paint(QPainter *painter, const QRect &repaintRegion) override;
 
     QPixmap closeBtnPixmap() { return m_closeBtnPixmap; }
     QPixmap maximizeBtnPixmap() { return m_maximizeBtnPixmap; }
@@ -62,7 +62,7 @@ public:
 
 public slots:
 
-#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12) 
+#if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 11) 
     virtual void init() override;
 #else
     virtual bool init() override;
@@ -89,12 +89,12 @@ private:
     bool radiusAvailable() const;
     bool isMaximized() const;
 
-    void paintFrameBackground(QPainter *painter, const QRectF &repaintRegion) const;
-    void paintCaption(QPainter *painter, const QRectF &repaintRegion) const;
-    void paintButtons(QPainter *painter, const QRectF &repaintRegion) const;
+    void paintFrameBackground(QPainter *painter, const QRect &repaintRegion) const;
+    void paintCaption(QPainter *painter, const QRect &repaintRegion) const;
+    void paintButtons(QPainter *painter, const QRect &repaintRegion) const;
 
-    KDecoration3::DecorationButtonGroup *m_leftButtons;
-    KDecoration3::DecorationButtonGroup *m_rightButtons;
+    KDecoration2::DecorationButtonGroup *m_leftButtons;
+    KDecoration2::DecorationButtonGroup *m_rightButtons;
 
     friend class CloseButton;
     friend class MaximizeButton;
