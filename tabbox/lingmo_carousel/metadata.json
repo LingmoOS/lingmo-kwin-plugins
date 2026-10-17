@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "KWin/WindowSwitcher",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "devalexandre",
+                "Email": "alexandre@dev2learn.com"
+            }
+        ],
+        "Description": "The selected window large in the middle, the previous one on the left and the next one on the right",
+        "Description[pt_BR]": "A janela selecionada grande no meio, a anterior à esquerda e a próxima à direita",
+        "Icon": "preferences-system-windows-effect-coverswitch",
+        "Id": "lingmo_carousel",
+        "License": "GPLv3",
+        "Name": "Lingmo Carousel",
+        "Name[pt_BR]": "Carrossel do Lingmo",
+        "Version": "1"
+    },
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-MainScript": "ui/main.qml"
+}

@@ -18,4 +18,4 @@ install(DIRECTORY scripts/linglauncher scripts/linghotcorners DESTINATION /usr/s
 install(DIRECTORY scripts/ling_squash DESTINATION /usr/share/kwin/effects)
 install(DIRECTORY scripts/ling_scale DESTINATION /usr/share/kwin/effects)
 install(DIRECTORY scripts/ling_popups DESTINATION /usr/share/kwin/effects)
-install(DIRECTORY tabbox/ling_thumbnail tabbox/ling_flip DESTINATION /usr/share/kwin/tabbox)
+install(DIRECTORY tabbox/lingmo_carousel tabbox/ling_thumbnail tabbox/ling_flip DESTINATION /usr/share/kwin/tabbox)
