@@ -1,0 +1,26 @@
+{
+    "KPackageStructure": "KWin/Script",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "revenmartin",
+                "Email": "revenmartin@gmail.com"
+            },
+            {
+                "Name": "devalexandre",
+                "Email": "alexandre@dev2learn.com"
+            }
+        ],
+        "Description": "Force the lingmo-launcher window keep in screen area",
+        "Description[pt_BR]": "Mantém a janela do lingmo-launcher dentro da área da tela",
+        "EnabledByDefault": true,
+        "Icon": "preferences-system-windows-script-test",
+        "Id": "linglauncher",
+        "License": "GPLv3",
+        "Name": "LingmoOS Launcher",
+        "Name[pt_BR]": "Lançador do LingmoOS",
+        "Version": "0.2"
+    },
+    "X-Plasma-API": "javascript",
+    "X-Plasma-MainScript": "code/main.js"
+}

@@ -9,12 +9,15 @@ message(STATUS "ECM version: ${ECM_VERSION}")
 
 add_subdirectory(plugins)
 
-install(FILES config/kglobalshortcutsrc DESTINATION /etc/xdg)
-install(FILES config/kwinrc DESTINATION /etc/xdg)
-install(FILES config/kwinrulesrc DESTINATION /etc/xdg)
+# No kglobalshortcutsrc here: a partial [kwin] group in /etc/xdg leaves every other
+# KWin shortcut (Alt+Tab, Alt+F4, ...) without a key
+# In Lingmo's own XDG config dir (the session puts it ahead of /etc/xdg): KDE packages
+# own files in /etc/xdg (kwin 6.8 ships /etc/xdg/kwinrulesrc)
+install(FILES config/kwinrc DESTINATION /usr/share/lingmo/xdg)
+install(FILES config/kwinrulesrc DESTINATION /usr/share/lingmo/xdg)
 
-install(DIRECTORY scripts/linglauncher DESTINATION /usr/share/kwin/scripts)
+install(DIRECTORY scripts/linglauncher scripts/linghotcorners DESTINATION /usr/share/kwin/scripts)
 install(DIRECTORY scripts/ling_squash DESTINATION /usr/share/kwin/effects)
 install(DIRECTORY scripts/ling_scale DESTINATION /usr/share/kwin/effects)
 install(DIRECTORY scripts/ling_popups DESTINATION /usr/share/kwin/effects)
-install(DIRECTORY tabbox/ling_thumbnail DESTINATION /usr/share/kwin/tabbox)
+install(DIRECTORY tabbox/lingmo_carousel tabbox/ling_thumbnail tabbox/ling_flip DESTINATION /usr/share/kwin/tabbox)

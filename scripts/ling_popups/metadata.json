@@ -1,16 +1,19 @@
 {
+    "KPackageStructure": "KWin/Effect",
     "KPlugin": {
         "Authors": [
             {
                 "Email": "vlad.zahorodnii@kde.org",
                 "Name": "Vlad Zahorodnii"
+            },
+            {
+                "Name": "devalexandre",
+                "Email": "alexandre@dev2learn.com"
             }
         ],
         "Category": "Appearance",
         "Description": "Make popups smoothly fade in and out when they are shown or hidden",
-        "ServiceTypes": [
-            "KWin/Effect"
-        ],
+        "Description[pt_BR]": "Faz os pop-ups aparecerem e sumirem suavemente ao serem mostrados ou ocultados",
         "EnabledByDefault": true,
         "Id": "lingmo_popups",
         "Version": "1.0"

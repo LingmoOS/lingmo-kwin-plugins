@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "KWin/WindowSwitcher",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "devalexandre",
+                "Email": "alexandre@dev2learn.com"
+            }
+        ],
+        "Description": "Windows stacked like the pages of a book; each switch turns a page",
+        "Description[pt_BR]": "Janelas empilhadas como as páginas de um livro; cada troca vira uma página",
+        "Icon": "preferences-system-windows-effect-flipswitch",
+        "Id": "ling_flip",
+        "License": "GPLv3",
+        "Name": "Lingmo Flip",
+        "Name[pt_BR]": "Folhear do Lingmo",
+        "Version": "1"
+    },
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-MainScript": "ui/main.qml"
+}

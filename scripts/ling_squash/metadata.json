@@ -1,9 +1,14 @@
 {
+    "KPackageStructure": "KWin/Effect",
     "KPlugin": {
         "Authors": [
             {
                 "Email": "rivolaks@hot.ee, vlad.zahorodnii@kde.org",
                 "Name": "Rivo Laks, Vlad Zahorodnii"
+            },
+            {
+                "Name": "devalexandre",
+                "Email": "alexandre@dev2learn.com"
             }
         ],
         "Category": "Appearance",
@@ -12,9 +17,6 @@
         "Id": "lingmo_squash",
         "License": "GPL",
         "Name": "LingmoSquash",
-        "ServiceTypes": [
-            "KWin/Effect"
-        ],
         "Version": "1",
         "Website": ""
     },

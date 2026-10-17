@@ -1,0 +1,22 @@
+{
+    "KPackageStructure": "KWin/Script",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "devalexandre",
+                "Email": "alexandre@dev2learn.com"
+            }
+        ],
+        "Description": "Hot corners that open the Lingmo launcher or lock the screen",
+        "Description[pt_BR]": "Cantos ativos que abrem o lançador do Lingmo ou bloqueiam a tela",
+        "EnabledByDefault": true,
+        "Icon": "preferences-desktop-screen-edges",
+        "Id": "linghotcorners",
+        "License": "GPLv3",
+        "Name": "LingmoOS Hot Corners",
+        "Name[pt_BR]": "Cantos ativos do LingmoOS",
+        "Version": "0.1"
+    },
+    "X-Plasma-API": "javascript",
+    "X-Plasma-MainScript": "code/main.js"
+}

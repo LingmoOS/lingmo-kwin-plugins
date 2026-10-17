@@ -3,18 +3,18 @@ OpenGLIsUnsafe=false
 
 [Plugins]
 blurEnabled=true
-kwin4_effect_fadingpopupsEnabled=false
-kwin4_effect_dialogparentEnabled=true
+fadingpopupsEnabled=false
+dialogparentEnabled=true
 
-kwin4_effect_fadeEnabled=false
-kwin4_effect_scaleEnabled=false
-kwin4_effect_grayscaleEnabled = false
+fadeEnabled=false
+scaleEnabled=false
 
-kwin4_effect_squashEnabled=false
-kwin4_effect_translucencyEnabled=false
+squashEnabled=false
+translucencyEnabled=false
 magiclampEnabled=false
 
-ling_scaleEnabled = true
+lingmo_scaleEnabled=true
+linglauncherEnabled=true
 
 
 [Effect-Blur]
@@ -46,15 +46,32 @@ BorderActivate=9
 BorderAlternativeActivate=9
 DesktopMode=1
 HighlightWindows=true
-LayoutName=ling_thumbnail
+LayoutName=lingmo_carousel
 MinimizedMode=0
 MultiScreenMode=0
-ShowDesktopMode=1
+ShowDesktopMode=0
 ShowTabBox=true
 SwitchingMode=0
 
+# Hot corners (Settings > Effects). Corners are KWin ElectricBorder numbers:
+# 1 top right, 3 bottom right, 5 bottom left, 7 top left, 9 none.
 [ElectricBorders]
 TopLeft=None
+TopRight=None
+BottomRight=None
+BottomLeft=None
+
+[Effect-overview]
+BorderActivate=7
+
+[Effect-windowview]
+BorderActivate=9
+BorderActivateAll=9
+
+# Launcher and lock screen corners: scripts/linghotcorners
+[Script-linghotcorners]
+Launcher=9
+LockScreen=9
 
 [TouchEdges]
 Bottom=None
@@ -62,9 +79,17 @@ Left=None
 Right=None
 Top=None
 
+# KWin 6.3+ reads the decoration plugin from kdecoration3 but the button layout
+# and border size from kdecoration2: keep both. XIA = close, minimize, maximize
+# on the left, macOS order.
+[org.kde.kdecoration2]
+BorderSize=Normal
+ButtonsOnLeft=XIA
+ButtonsOnRight=
+
 [org.kde.kdecoration3]
 BorderSize=Normal
-ButtonsOnLeft=
-ButtonsOnRight=HIAX
+ButtonsOnLeft=XIA
+ButtonsOnRight=
 library=org.lingmo.decoration
 theme=

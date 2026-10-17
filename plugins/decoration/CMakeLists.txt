@@ -1,5 +1,5 @@
 project (lingdecoration)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -20,7 +20,7 @@ add_compile_definitions(KDECORATION_MAJOR=${KDECORATION_MAJOR})
 add_compile_definitions(KDECORATION_MINOR=${KDECORATION_MINOR})
 add_compile_definitions(KDECORATION_PATCH=${KDECORATION_PATCH})
 
-find_package(Qt6 CONFIG REQUIRED COMPONENTS Gui Widgets Core)
+find_package(Qt6 CONFIG REQUIRED COMPONENTS Core Gui GuiPrivate Widgets)
 
 # Get the installation directory from qmake
 if(ECM_VERSION VERSION_LESS 5.93.0)
@@ -62,6 +62,10 @@ target_link_libraries (lingdecoration
     PRIVATE
         KDecoration3::KDecoration
 )
+
+# KPluginMetaData::findPluginById() looks the plugin up by file name, which must
+# match the "Id" in lingmoos.json, or KWin reports "Could not locate decoration plugin".
+set_target_properties(lingdecoration PROPERTIES OUTPUT_NAME "org.lingmo.decoration" PREFIX "")
 
 install (TARGETS lingdecoration
          DESTINATION ${QT_PLUGINS_DIR}/org.kde.kdecoration3)
