@@ -11,8 +11,10 @@ add_subdirectory(plugins)
 
 # No kglobalshortcutsrc here: a partial [kwin] group in /etc/xdg leaves every other
 # KWin shortcut (Alt+Tab, Alt+F4, ...) without a key
-install(FILES config/kwinrc DESTINATION /etc/xdg)
-install(FILES config/kwinrulesrc DESTINATION /etc/xdg)
+# In Lingmo's own XDG config dir (the session puts it ahead of /etc/xdg): KDE packages
+# own files in /etc/xdg (kwin 6.8 ships /etc/xdg/kwinrulesrc)
+install(FILES config/kwinrc DESTINATION /usr/share/lingmo/xdg)
+install(FILES config/kwinrulesrc DESTINATION /usr/share/lingmo/xdg)
 
 install(DIRECTORY scripts/linglauncher scripts/linghotcorners DESTINATION /usr/share/kwin/scripts)
 install(DIRECTORY scripts/ling_squash DESTINATION /usr/share/kwin/effects)
