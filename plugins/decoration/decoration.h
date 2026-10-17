@@ -60,6 +60,15 @@ public:
     bool darkMode() const;
     qreal devicePixelRatio() const { return m_devicePixelRatio; }
 
+    // The pointer is over one of the buttons of the group `button` belongs to:
+    // the whole group then shows its symbols
+    bool isButtonGroupHovered(const KDecoration3::DecorationButton *button) const;
+
+    // Window controls geometry (logical px, scaled by devicePixelRatio)
+    static constexpr qreal buttonDiameter = 16;   // the coloured circle
+    static constexpr qreal buttonCellWidth = 24;  // hit area: circle + 8 px gap
+    static constexpr qreal buttonEdgeMargin = 12; // window edge to the first circle
+
 public slots:
 
 #if KDECORATION_VERSION <= QT_VERSION_CHECK(5, 27, 12) 

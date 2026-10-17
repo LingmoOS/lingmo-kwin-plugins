@@ -92,26 +92,6 @@ void Decoration::paint(QPainter *painter, const QRectF &repaintArea)
             painter->drawRect(rect());
         }
         painter->restore();
-
-        // draw the capsule behind each button group, then the buttons
-        for (auto *group : {m_leftButtons, m_rightButtons}) {
-            if (group->buttons().isEmpty())
-                continue;
-            const qreal dpr = m_devicePixelRatio;
-            const qreal capsuleHeight = 22 * dpr;
-            QRectF capsule = group->geometry();
-            capsule.adjust(-3 * dpr, 0, 3 * dpr, 0);
-            capsule.setTop((titleBarHeight() - capsuleHeight) / 2);
-            capsule.setHeight(capsuleHeight);
-            painter->save();
-            painter->setRenderHint(QPainter::Antialiasing);
-            painter->setPen(QPen(darkMode() ? QColor(255, 255, 255, 20) : QColor(0, 0, 0, 15), 0.5 * dpr));
-            painter->setBrush(darkMode() ? QColor(255, 255, 255, 18) : QColor(0, 0, 0, 11));
-            painter->drawRoundedRect(capsule, capsuleHeight / 2, capsuleHeight / 2);
-            painter->restore();
-        }
-        m_leftButtons->paint(painter, repaintArea);
-        m_rightButtons->paint(painter, repaintArea);
     }
 
     paintCaption(painter, repaintArea);
@@ -256,29 +236,47 @@ void Decoration::updateButtonsGeometryDelayed()
 
 void Decoration::updateButtonsGeometry()
 {
-    auto s = settings();
-    // Compact buttons grouped in a capsule (see controlsCapsule()), matching
-    // LingmoUI's WindowControls
+    // Traffic lights: 16 px circles, each in a cell as tall as the title bar so the
+    // whole strip is clickable, 8 px apart (same layout as LingmoUI's WindowControls)
     const qreal dpr = m_devicePixelRatio;
-    const qreal btnWidth = 20 * dpr;
-    const qreal btnSpacing = 2 * dpr;
-    const qreal edgeMargin = (12 + 3) * dpr;   // window edge + capsule padding
+    const qreal cellWidth = buttonCellWidth * dpr;
+    const qreal edgeMargin = (buttonEdgeMargin - (buttonCellWidth - buttonDiameter) / 2) * dpr;
 
     foreach (const QPointer<KDecoration3::DecorationButton> &button, m_leftButtons->buttons() + m_rightButtons->buttons()) {
-        button.data()->setGeometry(QRectF(QPoint(0, 0), QSizeF(btnWidth, titleBarHeight())));
+        button.data()->setGeometry(QRectF(QPoint(0, 0), QSizeF(cellWidth, titleBarHeight())));
     }
 
     if (!m_leftButtons->buttons().isEmpty()) {
-        m_leftButtons->setSpacing(btnSpacing);
+        m_leftButtons->setSpacing(0);
         m_leftButtons->setPos(QPointF(edgeMargin, 0));
     }
 
     if (!m_rightButtons->buttons().isEmpty()) {
-        m_rightButtons->setSpacing(btnSpacing);
+        m_rightButtons->setSpacing(0);
         m_rightButtons->setPos(QPointF(size().width() - m_rightButtons->geometry().width() - edgeMargin, 0));
     }
 
     update();
+}
+
+bool Decoration::isButtonGroupHovered(const KDecoration3::DecorationButton *button) const
+{
+    for (auto *group : {m_leftButtons, m_rightButtons}) {
+        if (!group)
+            continue;
+        const auto buttons = group->buttons();
+        bool inGroup = false;
+        bool hovered = false;
+        for (const QPointer<KDecoration3::DecorationButton> &b : buttons) {
+            if (!b)
+                continue;
+            inGroup = inGroup || b.data() == button;
+            hovered = hovered || (b->isVisible() && b->isHovered());
+        }
+        if (inGroup)
+            return hovered;
+    }
+    return false;
 }
 
 void Decoration::updateShadow()

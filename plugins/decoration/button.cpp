@@ -36,6 +36,12 @@ Button::Button(KDecoration3::DecorationButtonType type, const QPointer<KDecorati
     auto c = decoration->window();
 #endif 
 
+    // The symbols show on every button of the group while any of them is hovered
+    connect(this, &KDecoration3::DecorationButton::hoveredChanged, this, [this] {
+        if (this->decoration())
+            this->decoration()->update();
+    });
+
     switch (type) {
     case KDecoration3::DecorationButtonType::Menu:
         break;
@@ -81,14 +87,14 @@ void Button::paint(QPainter *painter, const QRectF &repaintArea)
     painter->save();
     painter->setRenderHints(QPainter::Antialiasing, true);
 
-    // Lingmo window controls (same design as LingmoUI's WindowControls): coloured
-    // buttons with white glyphs inside the capsule painted by Decoration::paint
+    // Lingmo window controls: coloured circles (grey on an inactive window) that
+    // show their symbol while the pointer is over the group
     const qreal dpr = decoration->devicePixelRatio();
-    const qreal dotSize = 16 * dpr;
+    const qreal dotSize = Lingmo::Decoration::buttonDiameter * dpr;
     QRectF dot(0, 0, dotSize, dotSize);
     dot.moveCenter(QRectF(rect).center());
 
-    const bool lit = isHovered() || isPressed();
+    const bool groupHovered = decoration->isButtonGroupHovered(this);
     const bool dark = decoration->darkMode();
     const bool active = c->isActive();
 
@@ -112,21 +118,29 @@ void Button::paint(QPainter *painter, const QRectF &repaintArea)
         return;
     }
 
-    // Always coloured with a white glyph (grey when the window is inactive)
-    QColor fill = !active && !lit ? (dark ? QColor(0x4A, 0x4B, 0x57) : QColor(0xCF, 0xD0, 0xD6))
-                : isPressed() ? accent.darker(120)
-                : lit ? accent.lighter(110) : accent;
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(fill);
-    painter->drawEllipse(lit ? dot.adjusted(-0.6 * dpr, -0.6 * dpr, 0.6 * dpr, 0.6 * dpr) : dot);
+    const bool coloured = active || groupHovered;
+    const QColor fill = !coloured ? (dark ? QColor(0x4A, 0x4B, 0x57) : QColor(0xD4, 0xD5, 0xDA))
+                      : isPressed() ? accent.darker(125)
+                      : accent;
 
-    QColor ink = !active && !lit ? (dark ? QColor(255, 255, 255, 115) : QColor(255, 255, 255, 230))
-                                 : QColor(Qt::white);
-    QPen pen(ink, 1.5 * dpr, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    // Fill with a hairline ring a shade darker, so light circles keep an edge on
+    // a white title bar
+    painter->setPen(QPen(dark ? fill.lighter(115) : fill.darker(112), 0.8 * dpr));
+    painter->setBrush(fill);
+    painter->drawEllipse(dot.adjusted(0.4 * dpr, 0.4 * dpr, -0.4 * dpr, -0.4 * dpr));
+
+    if (!groupHovered) {
+        painter->restore();
+        return;
+    }
+
+    // Symbols: dark ink on the colour, like the traffic lights people know
+    const QColor ink = QColor(0, 0, 0, isPressed() ? 170 : 140);
+    QPen pen(ink, 1.4 * dpr, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
     const QPointF ctr = dot.center();
-    const qreal h = 3.8 * dpr;   // half glyph size
+    const qreal h = 3.4 * dpr;   // half glyph size
 
     switch (type()) {
     case KDecoration3::DecorationButtonType::Close:
@@ -134,21 +148,32 @@ void Button::paint(QPainter *painter, const QRectF &repaintArea)
         painter->drawLine(QPointF(ctr.x() + h, ctr.y() - h), QPointF(ctr.x() - h, ctr.y() + h));
         break;
     case KDecoration3::DecorationButtonType::Minimize:
-        painter->drawLine(QPointF(ctr.x() - h, ctr.y()), QPointF(ctr.x() + h, ctr.y()));
+        painter->drawLine(QPointF(ctr.x() - h - 0.5 * dpr, ctr.y()), QPointF(ctr.x() + h + 0.5 * dpr, ctr.y()));
         break;
-    case KDecoration3::DecorationButtonType::Maximize:
+    case KDecoration3::DecorationButtonType::Maximize: {
+        // zoom: two triangles pointing out; restore: pointing in
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(ink);
+        const qreal a = 3.8 * dpr;   // triangle leg
+        const qreal g = isChecked() ? 0.6 * dpr : 1.1 * dpr;   // gap along the diagonal
+        QPolygonF topRight, bottomLeft;
         if (isChecked()) {
-            // restore: two overlapping rounded squares
-            const qreal q = 3 * dpr;
-            painter->drawRoundedRect(QRectF(ctr.x() - q + 2 * dpr, ctr.y() - q - 2 * dpr + 1 * dpr, 2 * q, 2 * q), 1.5 * dpr, 1.5 * dpr);
-            painter->setBrush(fill);
-            painter->drawRoundedRect(QRectF(ctr.x() - q - 1 * dpr, ctr.y() - q + 1 * dpr, 2 * q, 2 * q), 1.5 * dpr, 1.5 * dpr);
+            // restore: corners meet at the centre
+            topRight << QPointF(ctr.x() + g, ctr.y() - g) << QPointF(ctr.x() + g + a, ctr.y() - g)
+                     << QPointF(ctr.x() + g, ctr.y() - g - a);
+            bottomLeft << QPointF(ctr.x() - g, ctr.y() + g) << QPointF(ctr.x() - g - a, ctr.y() + g)
+                       << QPointF(ctr.x() - g, ctr.y() + g + a);
         } else {
-            // zoom: rounded square outline
-            const qreal q = 3.6 * dpr;
-            painter->drawRoundedRect(QRectF(ctr.x() - q, ctr.y() - q, 2 * q, 2 * q), 1.3 * dpr, 1.3 * dpr);
+            const qreal e = a + g;
+            topRight << QPointF(ctr.x() + e - a, ctr.y() - e) << QPointF(ctr.x() + e, ctr.y() - e)
+                     << QPointF(ctr.x() + e, ctr.y() - e + a);
+            bottomLeft << QPointF(ctr.x() - e + a, ctr.y() + e) << QPointF(ctr.x() - e, ctr.y() + e)
+                       << QPointF(ctr.x() - e, ctr.y() + e - a);
         }
+        painter->drawPolygon(topRight);
+        painter->drawPolygon(bottomLeft);
         break;
+    }
     default:
         break;
     }
